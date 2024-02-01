@@ -1,0 +1,11 @@
+*.iml
+.mvn/
+.idea/
+target/
+build/
+spring-shell.log
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IntelliJ
+out/
