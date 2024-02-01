@@ -1,10 +1,10 @@
 package ru.otus.hw.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Question;
 
@@ -13,10 +13,10 @@ public class TestServiceImpl implements TestService {
 
     private final IOService ioService;
 
+    private final QuestionDao questionDao;
+
     @Override
     public void executeTest() {
-        var context = new ClassPathXmlApplicationContext("/spring-context.xml");
-        var questionDao = context.getBean(QuestionDao.class);
         var scanner = new Scanner(System.in);
 
         ioService.printLine("\nPlease answer the questions below\n");
@@ -57,7 +57,8 @@ public class TestServiceImpl implements TestService {
         ioService.printFormattedLine("\nScore: %d/%d", score,result.size());
     }
 
-    private int correctAnswerPosition(Question question) {
+    @VisibleForTesting
+    protected int correctAnswerPosition(Question question) {
         for (int i = 0; i < question.answers().size(); i++) {
             if (question.answers().get(i).isCorrect()) {
                 return i;
