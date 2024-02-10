@@ -1,8 +1,11 @@
 package ru.otus.hw.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
+@Service
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class TestRunnerServiceImpl implements TestRunnerService {
 
     private final TestService testService;
