@@ -52,6 +52,8 @@ public class TestServiceImpl implements TestService {
     }
 
     private int actualAnswerId(Question question) {
-        return ioService.readIntForRange(0, question.answers().size() - 1, "Invalid answer");
+        var min = 0;
+        var max = question.answers().size() - 1;
+        return ioService.readIntForRange(min, max, String.format("Invalid answer. Use [%d;%d]", max, max));
     }
 }
