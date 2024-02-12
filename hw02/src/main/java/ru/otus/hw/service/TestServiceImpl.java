@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.dao.QuestionDao;
+import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.domain.Student;
 import ru.otus.hw.domain.TestResult;
@@ -26,11 +27,8 @@ public class TestServiceImpl implements TestService {
         for (var question: questions) {
             printQuestion(question);
 
-            var expectedAnswerId = expectedAnswerId(question);
-            var actualAnswerId = actualAnswerId(question);
-
-            var isAnswerValid = expectedAnswerId == actualAnswerId;
-            testResult.applyAnswer(question, isAnswerValid);
+            var actualAnswer = actualAnswer(question);
+            testResult.applyAnswer(question, actualAnswer.isCorrect());
         }
         return testResult;
     }
@@ -42,18 +40,14 @@ public class TestServiceImpl implements TestService {
         }
     }
 
-    private int expectedAnswerId(Question question) {
-        for (int i = 0; i < question.answers().size(); i++) {
-            if (question.answers().get(i).isCorrect()) {
-                return i;
-            }
-        }
-        return -1;
+    private Answer actualAnswer(Question question) {
+        var actualAnswerId = actualAnswerId(question);
+        return question.answers().get(actualAnswerId);
     }
 
     private int actualAnswerId(Question question) {
         var min = 0;
         var max = question.answers().size() - 1;
-        return ioService.readIntForRange(min, max, String.format("Invalid answer. Use [%d;%d]", max, max));
+        return ioService.readIntForRange(min, max, String.format("Invalid answer. Use [%d;%d]", min, max));
     }
 }
