@@ -9,3 +9,4 @@ OTUS Spring-2024-01
 | № | Статус                | Ссылка                                                                      |
 |---|-----------------------|-----------------------------------------------------------------------------|
 | 1 | :white_check_mark:    | [hw01](https://github.com/foxel93/2024-01-otus-spring-zotov/tree/main/hw01) |
+| 2 | :white_check_mark:    | [hw02](https://github.com/foxel93/2024-01-otus-spring-zotov/tree/main/hw02) |
