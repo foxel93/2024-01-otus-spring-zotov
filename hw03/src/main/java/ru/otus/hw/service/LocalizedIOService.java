@@ -7,7 +7,7 @@ public interface LocalizedIOService extends LocalizedMessagesService, IOService 
 
     String readStringWithPromptLocalized(String promptCode);
 
-    int readIntForRangeLocalized(int min, int max, String errorMessageCode);
+    int readIntForRangeLocalized(int min, int max, String errorMessageCode, Object... args);
 
     int readIntForRangeWithPromptLocalized(int min, int max, String promptCode, String errorMessageCode);
 }

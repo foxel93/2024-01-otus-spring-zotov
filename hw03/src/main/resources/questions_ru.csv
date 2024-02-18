@@ -1,4 +1,5 @@
-# Добавить сюда своих вопросов. Эту строку надо пропустить при настройке CsvToBean (withSkipLines)
-Есть ли жизнь на Марсе?;Это науке пока не известно%true|Конечно. Красные (НЛО) это с Марса. А зеленые (НЛО) с Венеры%false|Точно нет%false
-Как нужно загружать ресурс из jar в Java?;ClassLoader#geResourceAsStream или ClassPathResource#getInputStream%true|ClassLoader#geResource#getFile + FileReader%false|Wingardium Leviosa%false
-Какой предпочтительный способ реакции на исключения?;@SneakyThrow%false|e.printStackTrace()%false|Проброс дальше с предварительным оборачиванием в бизнес-исключение (например, QuestionReadException)%true|Игнорирование исключения%false
+Какой правильный вывод "Hello World" в Java?:Console.WriteLine("Hello World");%false|print("Hello World");%false|echo("Hello World");%false|System.out.println("Hello World");%true
+Java - это укороченное название "JavaScript"?:нет%true|да%false
+Как вставить комментарии в код Java?:// Это - комментарий%true|/* Это - комментарий%false|# Это - комментарий%false
+Какой тип данных используется для создания текста?:string%false|myString%false|Txt%false|String%true
+Как создать числовую переменную со значением 5?:int x = 5%true|x = 5%false|float x = 5%false|num x = 5%false
