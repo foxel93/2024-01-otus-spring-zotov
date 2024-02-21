@@ -5,13 +5,10 @@ import lombok.Setter;
 
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "test")
-// Сейчас класс соответствует файлу настроек. Чтобы они сюда отобразились нужно только правильно разместить аннотации
 public class AppProperties implements TestConfig, TestFileNameProvider, LocaleConfig {
 
     @Getter

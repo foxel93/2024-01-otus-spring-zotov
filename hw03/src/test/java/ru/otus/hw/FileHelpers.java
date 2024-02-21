@@ -9,9 +9,9 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class Helpers {
+public class FileHelpers {
     public static File createTempFileInResources(@NonNull String prefix, @Nullable String suffix) throws IOException {
-        var resource = Helpers.class.getResource("/");
+        var resource = FileHelpers.class.getResource("/");
         if (resource == null) {
             throw new FileNotFoundException("Resource is not found");
         }
