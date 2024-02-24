@@ -5,10 +5,10 @@ import lombok.Setter;
 
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Setter
-@Configuration
+@ConfigurationProperties(prefix = "test")
 public class AppProperties implements TestConfig, TestFileNameProvider, LocaleConfig {
 
     @Getter
