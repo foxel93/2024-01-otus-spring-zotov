@@ -1,0 +1,8 @@
+${AnsiColor.RED}
+________           _____
+___  __/_____________  /_
+__  /  _  _ \_  ___/  __/
+_  /   /  __/(__  )/ /_
+/_/    \___//____/ \__/
+${AnsiColor.DEFAULT}
+Powered by Spring Boot ${spring-boot.version}
