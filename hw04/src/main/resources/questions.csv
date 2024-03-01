@@ -1,0 +1,5 @@
+What is a correct syntax to output "Hello World" in Java?:Console.WriteLine("Hello World");%false|print("Hello World");%false|echo("Hello World");%false|System.out.println("Hello World");%true
+Java is short for "JavaScript"?:false%true|true%false
+How do you insert COMMENTS in Java code?:// This is a comment%true|/* This is a comment%false|# This is a comment%false
+Which data type is used to create a variable that should store text?:string%false|myString%false|Txt%false|String%true
+How do you create a variable with the numeric value 5?:int x = 5%true|x = 5%false|float x = 5%false|num x = 5%false
