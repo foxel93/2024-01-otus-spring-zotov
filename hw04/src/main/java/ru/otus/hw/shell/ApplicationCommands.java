@@ -16,11 +16,15 @@ import ru.otus.hw.service.TestService;
 @RequiredArgsConstructor
 public class ApplicationCommands {
     private final StudentService studentService;
+
     private final TestService testService;
+
     private final ResultService resultService;
+
     private final LocalizedIOService ioService;
 
     private Student student;
+
     private boolean testPassed;
 
     @ShellMethod(key = "start", value = "Start test")
