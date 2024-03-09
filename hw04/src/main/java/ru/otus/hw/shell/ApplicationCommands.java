@@ -1,7 +1,6 @@
 package ru.otus.hw.shell;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -32,7 +31,6 @@ public class ApplicationCommands {
     public void startTest() {
         var result = testService.executeTestFor(student);
         resultService.showResult(result);
-        MessageSourceAccessor a;
         testPassed = true;
     }
 
