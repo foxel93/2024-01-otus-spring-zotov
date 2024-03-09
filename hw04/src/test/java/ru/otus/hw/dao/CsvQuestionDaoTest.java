@@ -1,0 +1,83 @@
+package ru.otus.hw.dao;
+
+import static ru.otus.hw.QuestionHelpers.generateQuestions;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import ru.otus.hw.FileHelpers;
+import ru.otus.hw.config.TestFileNameProvider;
+import ru.otus.hw.domain.Question;
+
+public class CsvQuestionDaoTest {
+    private static Stream<Arguments> testParams() {
+        return Stream.of(
+            Arguments.of(generateQuestions(0, 1, 1)),
+            Arguments.of(generateQuestions(1, 1, 1)),
+            Arguments.of(generateQuestions(1, 2, 2)),
+            Arguments.of(generateQuestions(2, 2, 2)),
+            Arguments.of(generateQuestions(10, 1, 5))
+        );
+    }
+
+    private File file;
+
+    @BeforeEach
+    void beforeEach() throws IOException {
+        FileHelpers.tryDeleteFile(file);
+        file = FileHelpers.createTempFileInResources("questions_", ".csv");
+    }
+
+    @AfterEach
+    void afterEach() {
+        FileHelpers.tryDeleteFile(file);
+    }
+
+    @ParameterizedTest(name = "{index} - expected questions: [{0}]")
+    @MethodSource("testParams")
+    @DisplayName("Find all questions")
+    public void findAll_csvFile_questions(List<Question> questions) throws IOException {
+        writeToFile(questions);
+        var csv = new CsvQuestionDao(provider(file.getName()));
+
+        var result = csv.findAll();
+
+        Assertions.assertEquals(questions, result);
+    }
+
+    private TestFileNameProvider provider(String fileName) {
+        return () -> fileName;
+    }
+
+    private void writeToFile(List<Question> questions) throws FileNotFoundException {
+        try (var pw = new PrintWriter(file)) {
+            questions.stream()
+                .map(this::toCsvString)
+                .forEach(pw::println);
+        }
+    }
+
+    private String toCsvString(Question question) {
+        var builder = new StringBuilder(question.text());
+        var delimiter = ":";
+        for (var answer : question.answers()) {
+            builder
+                .append(delimiter)
+                .append(answer.text())
+                .append("%")
+                .append(answer.isCorrect());
+            delimiter = "|";
+        }
+        return builder.toString();
+    }
+}
