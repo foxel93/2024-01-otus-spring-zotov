@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 @RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
@@ -49,14 +47,10 @@ public class BookServiceImpl implements BookService {
     }
 
     private Book save(long id, String title, long authorId, Set<Long> genresIds) {
-        if (isEmpty(genresIds)) {
-            throw new IllegalArgumentException("Genres ids must not be null");
-        }
-
         var author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId)));
         var genres = genreRepository.findAllByIds(genresIds);
-        if (isEmpty(genres) || genresIds.size() != genres.size()) {
+        if (genresIds.size() != genres.size()) {
             throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(genresIds));
         }
 

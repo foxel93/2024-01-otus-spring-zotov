@@ -13,26 +13,6 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class JdbcGenreRepository implements GenreRepository {
-    private static final String FIND_ALL_QUERY =
-        """
-            SELECT
-                id,
-                name
-            FROM
-                genres
-        """;
-
-    private static final String FIND_BY_IDS_QUERY =
-        """
-            SELECT
-                id,
-                name
-            FROM
-                genres
-            WHERE
-                id IN (:ids)
-        """;
-
     private static final RowMapper<Genre> MAPPER = (rs, rowNum) -> new Genre(
         rs.getInt("id"),
         rs.getString("name")
@@ -42,11 +22,20 @@ public class JdbcGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> findAll() {
-        return jdbc.query(FIND_ALL_QUERY, MAPPER);
+        var sqlQuery = """
+                SELECT id, name
+                FROM genres
+            """;
+        return jdbc.query(sqlQuery, MAPPER);
     }
 
     @Override
     public List<Genre> findAllByIds(Set<Long> ids) {
-        return jdbc.query(FIND_BY_IDS_QUERY, new MapSqlParameterSource("ids", ids), MAPPER);
+        var sqlQuery = """
+                SELECT id, name
+                FROM genres
+                WHERE id IN (:ids)
+            """;
+        return jdbc.query(sqlQuery, new MapSqlParameterSource("ids", ids), MAPPER);
     }
 }

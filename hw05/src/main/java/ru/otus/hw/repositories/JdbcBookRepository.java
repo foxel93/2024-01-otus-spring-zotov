@@ -26,98 +26,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Log4j2
 public class JdbcBookRepository implements BookRepository {
-    private static final String FIND_ALL_WITHOUT_GENRES_QUERY =
-        """
-            SELECT
-                b.id AS book_id,
-                b.title AS book_title,
-                a.id AS author_id,
-                a.full_name AS author_name
-            FROM
-                books b
-            LEFT JOIN
-                authors a ON a.id = b.author_id
-        """;
-
-    private static final String FIND_BY_ID_QUERY =
-        """
-            SELECT
-                b.id AS book_id,
-                b.title AS book_title,
-                a.id AS author_id,
-                a.full_name AS author_name,
-                g.id AS genre_id,
-                g.name AS genre_name
-            FROM
-                books b
-            LEFT JOIN
-                authors a ON a.id = b.author_id
-            LEFT JOIN
-                books_genres bg ON bg.book_id = b.id
-            LEFT JOIN
-                genres g ON g.id = bg.genre_id
-            WHERE
-                b.id = :book_id
-        """;
-
-    private static final String INSERT_BOOK_QUERY =
-        """
-            INSERT INTO
-                books (title, author_id)
-            VALUES
-                (:book_title, :author_id)
-        """;
-
-    private static final String UPDATE_BOOK_QUERY =
-        """
-            UPDATE
-                books
-            SET
-                title = :book_title,
-                author_id = :author_id
-            WHERE id = :book_id
-        """;
-
-    private static final String DELETE_BOOK_QUERY =
-        """
-            DELETE FROM
-                books
-            WHERE
-                id = :book_id
-        """;
-
-    private static final String INSERT_BOOKS_GENRES_QUERY =
-        """
-            INSERT INTO
-                books_genres (book_id, genre_id)
-            VALUES
-                (:book_id, :genre_id)
-        """;
-
-    private static final String FIND_ALL_GENRE_RELATIONS_QUERY =
-        """
-            SELECT
-                book_id,
-                genre_id
-            FROM
-                books_genres
-        """;
-
-    private static final String DELETE_GENRE_RELATIONS_BY_BOOK_ID_QUERY =
-        """
-            DELETE FROM
-                books_genres
-            WHERE
-                book_id = :book_id
-        """;
-
     private final GenreRepository genreRepository;
 
     private final NamedParameterJdbcOperations jdbc;
 
     @Override
     public Optional<Book> findById(long id) {
-        return jdbc.query(FIND_BY_ID_QUERY, mapBookIdParam(id), new BookResultSetExtractor());
+        var sqlQuery = """
+                SELECT
+                    b.id AS book_id,
+                    b.title AS book_title,
+                    a.id AS author_id,
+                    a.full_name AS author_name,
+                    g.id AS genre_id,
+                    g.name AS genre_name
+                FROM books b
+                LEFT JOIN authors a ON a.id = b.author_id
+                LEFT JOIN books_genres bg ON bg.book_id = b.id
+                LEFT JOIN genres g ON g.id = bg.genre_id
+                WHERE b.id = :book_id
+            """;
+        return jdbc.query(sqlQuery, mapBookIdParam(id), new BookResultSetExtractor());
     }
 
     @Override
@@ -139,15 +68,34 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        jdbc.update(DELETE_BOOK_QUERY, mapBookIdParam(id));
+        var sqlQuery = """
+                DELETE FROM books
+                WHERE  id = :book_id
+            """;
+        jdbc.update(sqlQuery, mapBookIdParam(id));
     }
 
     private List<Book> getAllBooksWithoutGenres() {
-        return jdbc.query(FIND_ALL_WITHOUT_GENRES_QUERY, (rs, rowNum) -> mapBookRow(rs));
+        var sqlQuery = """
+            SELECT
+                b.id AS book_id,
+                b.title AS book_title,
+                a.id AS author_id,
+                a.full_name AS author_name
+            FROM
+                books b
+            LEFT JOIN
+                authors a ON a.id = b.author_id
+            """;
+        return jdbc.query(sqlQuery, (rs, rowNum) -> mapBookRow(rs));
     }
 
     private List<BookGenreRelation> getAllGenreRelations() {
-        return jdbc.query(FIND_ALL_GENRE_RELATIONS_QUERY, (rs, rowNum) -> mapBookByGenreRow(rs));
+        var sqlQuery = """
+                SELECT book_id, genre_id
+                FROM books_genres
+            """;
+        return jdbc.query(sqlQuery, (rs, rowNum) -> mapBookByGenreRow(rs));
     }
 
     private void mergeBooksInfo(
@@ -169,7 +117,11 @@ public class JdbcBookRepository implements BookRepository {
 
     private Book insert(Book book) {
         var keyHolder = new GeneratedKeyHolder();
-        jdbc.update(INSERT_BOOK_QUERY, mapBookParams(book), keyHolder);
+        var sqlQuery = """
+                INSERT INTO books (title, author_id)
+                VALUES (:book_title, :author_id)
+            """;
+        jdbc.update(sqlQuery, mapBookParams(book), keyHolder);
 
         //noinspection DataFlowIssue
         book.setId(keyHolder.getKeyAs(Long.class));
@@ -178,7 +130,14 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private Book update(Book book) {
-        var result = jdbc.update(UPDATE_BOOK_QUERY, mapBookParams(book));
+        var sqlQuery = """
+                UPDATE books
+                SET
+                    title = :book_title,
+                    author_id = :author_id
+                WHERE id = :book_id
+            """;
+        var result = jdbc.update(sqlQuery, mapBookParams(book));
 
         if (result == 0) {
             throw new EntityNotFoundException("Book with id %d not found".formatted(book.getId()));
@@ -191,11 +150,19 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private void batchInsertGenresRelationsFor(Book book) {
-        jdbc.batchUpdate(INSERT_BOOKS_GENRES_QUERY, mapBookGenreRelationParams(book));
+        var sqlQuery = """
+                INSERT INTO books_genres (book_id, genre_id)
+                VALUES (:book_id, :genre_id)
+            """;
+        jdbc.batchUpdate(sqlQuery, mapBookGenreRelationParams(book));
     }
 
     private void removeGenresRelationsFor(Book book) {
-        jdbc.update(DELETE_GENRE_RELATIONS_BY_BOOK_ID_QUERY, mapBookIdParam(book));
+        var sqlQuery = """
+                DELETE FROM books_genres
+                WHERE book_id = :book_id
+            """;
+        jdbc.update(sqlQuery, mapBookIdParam(book));
     }
 
     @RequiredArgsConstructor
