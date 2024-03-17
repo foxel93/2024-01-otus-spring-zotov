@@ -3,8 +3,8 @@ package ru.otus.hw.repositories;
 import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
@@ -22,15 +22,8 @@ public class JpaBookRepository implements BookRepository {
     @Override
     public Optional<Book> findById(long id) {
         var entityGraph = em.getEntityGraph("book-entity-graph");
-        var query = em.createQuery("SELECT b FROM Book b WHERE b.id = :id", Book.class);
-        query.setParameter("id", id);
-        query.setHint(FETCH.getKey(), entityGraph);
-
-        try {
-            return Optional.of(query.getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
+        var properties = Map.<String, Object>of(FETCH.getKey(), entityGraph);
+        return Optional.ofNullable(em.find(Book.class, id, properties));
     }
 
     @Override
