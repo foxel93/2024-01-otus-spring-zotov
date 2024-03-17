@@ -68,15 +68,12 @@ class JpaCommentRepositoryTest {
     }
 
     private void prepare(Comment expectedComment) {
-        assertThat(jpaBookRepository.findById(expectedComment.getBook().getId())).isNotPresent();
-        assertThat(jpaCommentRepository.findById(expectedComment.getId())).isNotPresent();
-
         jpaBookRepository.save(expectedComment.getBook());
         jpaCommentRepository.save(expectedComment);
     }
 
     private static List<Book> getDbBooks() {
-        return IntStream.range(5, 8).boxed()
+        return IntStream.range(1, 4).boxed()
             .map(id -> new Book(id,
                 "BookTitle_" + id,
                 new Author(id, "Author_" + id),

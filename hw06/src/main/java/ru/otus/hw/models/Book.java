@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Getter
 @Setter
@@ -27,10 +30,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "books")
-@NamedEntityGraph(
-    name = "book-entity-graph",
-    attributeNodes = {@NamedAttributeNode("author"), @NamedAttributeNode("genres")}
-)
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "book-author-entity-graph",
+        attributeNodes = {
+            @NamedAttributeNode("author"),
+        }
+    ),
+    @NamedEntityGraph(
+        name = "book-author-genres-entity-graph",
+        attributeNodes = {
+            @NamedAttributeNode("author"),
+            @NamedAttributeNode("genres"),
+        })
+})
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +52,15 @@ public class Book {
     @Column(name = "title")
     private String title;
 
+    @Fetch(FetchMode.JOIN)
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Genre.class)
     @JoinTable(name = "books_genres",
-        joinColumns = { @JoinColumn(name = "book_id") },
-        inverseJoinColumns = { @JoinColumn(name = "genre_id") })
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 }
