@@ -52,7 +52,6 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @Fetch(FetchMode.JOIN)
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "author_id")
     private Author author;

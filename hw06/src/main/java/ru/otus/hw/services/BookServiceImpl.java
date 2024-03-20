@@ -2,7 +2,6 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
@@ -29,10 +28,18 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findById(id);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
+    @Transactional(readOnly = true)
     @Override
     public List<Book> findAll() {
-        return bookRepository.findAll();
+        return withGenres(bookRepository.findAll());
+    }
+
+    private List<Book> withGenres(List<Book> books) {
+        for (var book : books) {
+            book.getGenres().size();
+        }
+
+        return books;
     }
 
     @Transactional
