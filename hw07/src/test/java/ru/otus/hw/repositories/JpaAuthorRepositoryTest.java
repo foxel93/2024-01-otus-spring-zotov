@@ -11,16 +11,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 
-@DisplayName("Репозиторий на основе JPA для работы с авторами")
+@DisplayName("Репозиторий на основе DataJPA для работы с авторами")
 @DataJpaTest
-@Import({JpaAuthorRepository.class})
 class JpaAuthorRepositoryTest {
 
     @Autowired
-    private JpaAuthorRepository jpaAuthorRepository;
+    private AuthorRepository jpaAuthorRepository;
 
     private List<Author> dbAuthors;
 

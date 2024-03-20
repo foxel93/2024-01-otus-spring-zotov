@@ -10,22 +10,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
 
-@DisplayName("Репозиторий на основе JPA для работы с комментариями")
+@DisplayName("Репозиторий на основе DataJPA для работы с комментариями")
 @DataJpaTest
-@Import({JpaCommentRepository.class, JpaBookRepository.class})
 class JpaCommentRepositoryTest {
 
     @Autowired
-    private JpaBookRepository jpaBookRepository;
+    private BookRepository jpaBookRepository;
 
     @Autowired
-    private JpaCommentRepository jpaCommentRepository;
+    private CommentRepository jpaCommentRepository;
 
     @DisplayName("должен загружать все комментарии по id книги")
     @ParameterizedTest
