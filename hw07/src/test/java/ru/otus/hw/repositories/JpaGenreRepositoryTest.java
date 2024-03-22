@@ -32,7 +32,7 @@ class JpaGenreRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbGenres")
     void shouldReturnCorrectGenreById(Genre expectedGenre) {
-        var actualGenres = jpaGenreRepository.findAllByIds(Set.of(expectedGenre.getId()));
+        var actualGenres = jpaGenreRepository.findByIdIn(Set.of(expectedGenre.getId()));
         assertThat(actualGenres).usingRecursiveComparison().isEqualTo(List.of(expectedGenre));
     }
 

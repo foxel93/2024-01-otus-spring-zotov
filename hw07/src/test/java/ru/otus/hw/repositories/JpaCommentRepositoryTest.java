@@ -31,7 +31,7 @@ class JpaCommentRepositoryTest {
     void shouldReturnCorrectCommentByBookId(Comment expectedComment) {
         prepare(expectedComment);
 
-        var bookComments = jpaCommentRepository.findAllByBookId(expectedComment.getBook().getId());
+        var bookComments = jpaCommentRepository.findByBookId(expectedComment.getBook().getId());
         assertThat(bookComments).isNotEmpty();
 
         bookComments.forEach(actualComment -> assertAll(
