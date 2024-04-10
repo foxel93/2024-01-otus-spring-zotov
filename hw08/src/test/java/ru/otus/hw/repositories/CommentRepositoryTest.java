@@ -9,15 +9,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
 
-@DisplayName("Репозиторий на основе DataJPA для работы с комментариями")
-@DataJpaTest
-class JpaCommentRepositoryTest {
+@DisplayName("Репозиторий на основе DataMongo для работы с комментариями")
+@DataMongoTest
+class CommentRepositoryTest {
 
     @Autowired
     private BookRepository jpaBookRepository;
@@ -31,7 +31,7 @@ class JpaCommentRepositoryTest {
     void shouldReturnCorrectCommentByBookId(Comment expectedComment) {
         prepare(expectedComment);
 
-        var bookComments = jpaCommentRepository.findByBookId(expectedComment.getBook().getId());
+        var bookComments = jpaCommentRepository.findAllByBookId(expectedComment.getBook().getId());
         assertThat(bookComments).isNotEmpty();
 
         bookComments.forEach(actualComment -> assertAll(
@@ -72,17 +72,17 @@ class JpaCommentRepositoryTest {
 
     private static List<Book> getDbBooks() {
         return IntStream.range(1, 4).boxed()
-            .map(id -> new Book(id,
+            .map(id -> new Book(id.toString(),
                 "BookTitle_" + id,
-                new Author(id, "Author_" + id),
-                List.of(new Genre(id, "Genre_" + id))
+                new Author(id.toString(), "Author_" + id),
+                List.of(new Genre(id.toString(), "Genre_" + id))
             ))
             .toList();
     }
 
     private static List<Comment> getDbComments(List<Book> dbBooks) {
         return IntStream.range(5, 8).boxed()
-            .map(id -> new Comment(id,
+            .map(id -> new Comment(id.toString(),
                 "Comment_" + id,
                 dbBooks.get(id - 5)
             ))

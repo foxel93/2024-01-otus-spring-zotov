@@ -24,46 +24,38 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Book> findById(long id) {
+    public Optional<Book> findById(String id) {
         return bookRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Book> findAll() {
-        return withGenres(bookRepository.findAll());
-    }
-
-    private List<Book> withGenres(List<Book> books) {
-        for (var book : books) {
-            book.getGenres().size();
-        }
-
-        return books;
+        return bookRepository.findAll();
     }
 
     @Transactional
     @Override
-    public Book insert(String title, long authorId, Set<Long> genresIds) {
-        return save(0, title, authorId, genresIds);
+    public Book insert(String title, String authorId, Set<String> genresIds) {
+        return save(null, title, authorId, genresIds);
     }
 
     @Transactional
     @Override
-    public Book update(long id, String title, long authorId, Set<Long> genresIds) {
-        findById(id).orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(id)));
+    public Book update(String id, String title, String authorId, Set<String> genresIds) {
+        findById(id).orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(id)));
         return save(id, title, authorId, genresIds);
     }
 
     @Transactional
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         bookRepository.deleteById(id);
     }
 
-    private Book save(long id, String title, long authorId, Set<Long> genresIds) {
+    private Book save(String id, String title, String authorId, Set<String> genresIds) {
         var author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId)));
+                .orElseThrow(() -> new EntityNotFoundException("Author with id %s not found".formatted(authorId)));
         var genres = genreRepository.findByIdIn(genresIds);
         if (genresIds.size() != genres.size()) {
             throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(genresIds));

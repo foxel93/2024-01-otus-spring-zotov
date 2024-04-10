@@ -10,15 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.hw.models.Author;
 
-@DisplayName("Репозиторий на основе DataJPA для работы с авторами")
-@DataJpaTest
-class JpaAuthorRepositoryTest {
+@DisplayName("Репозиторий на основе DataMongo для работы с авторами")
+@DataMongoTest
+class AuthorRepositoryTest {
 
     @Autowired
-    private AuthorRepository jpaAuthorRepository;
+    private AuthorRepository authorRepository;
 
     private List<Author> dbAuthors;
 
@@ -31,7 +31,7 @@ class JpaAuthorRepositoryTest {
     @ParameterizedTest
     @MethodSource("getDbAuthors")
     void shouldReturnCorrectAuthorById(Author expectedAuthor) {
-        var actualAuthor = jpaAuthorRepository.findById(expectedAuthor.getId());
+        var actualAuthor = authorRepository.findById(expectedAuthor.getId());
         assertThat(actualAuthor).isPresent()
                 .get()
                 .usingRecursiveComparison()
@@ -41,7 +41,7 @@ class JpaAuthorRepositoryTest {
     @DisplayName("должен загружать список всех авторов")
     @Test
     void shouldReturnCorrectAuthorList() {
-        var actualAuthors = jpaAuthorRepository.findAll();
+        var actualAuthors = authorRepository.findAll();
         var expectedAuthors = dbAuthors;
 
         assertThat(actualAuthors).usingRecursiveComparison().isEqualTo(expectedAuthors);
@@ -50,7 +50,7 @@ class JpaAuthorRepositoryTest {
 
     private static List<Author> getDbAuthors() {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new Author(id, "Author_" + id))
+                .map(id -> new Author(id.toString(), "Author_" + id))
                 .toList();
     }
 }
