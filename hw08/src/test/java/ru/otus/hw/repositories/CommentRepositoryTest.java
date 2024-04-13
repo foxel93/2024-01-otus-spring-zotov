@@ -20,10 +20,10 @@ import ru.otus.hw.models.Genre;
 class CommentRepositoryTest {
 
     @Autowired
-    private BookRepository jpaBookRepository;
+    private BookRepository bookRepository;
 
     @Autowired
-    private CommentRepository jpaCommentRepository;
+    private CommentRepository commentRepository;
 
     @DisplayName("должен загружать все комментарии по id книги")
     @ParameterizedTest
@@ -31,7 +31,7 @@ class CommentRepositoryTest {
     void shouldReturnCorrectCommentByBookId(Comment expectedComment) {
         prepare(expectedComment);
 
-        var bookComments = jpaCommentRepository.findAllByBookId(expectedComment.getBook().getId());
+        var bookComments = commentRepository.findAllByBookId(expectedComment.getBook().getId());
         assertThat(bookComments).isNotEmpty();
 
         bookComments.forEach(actualComment -> assertAll(
@@ -46,7 +46,7 @@ class CommentRepositoryTest {
     void shouldReturnCorrectCommentById(Comment expectedComment) {
         prepare(expectedComment);
 
-        assertThat(jpaCommentRepository.findById(expectedComment.getId()))
+        assertThat(commentRepository.findById(expectedComment.getId()))
             .isPresent()
             .get()
             .usingRecursiveComparison()
@@ -58,16 +58,16 @@ class CommentRepositoryTest {
     @MethodSource("getDbComments")
     void shouldRemoveComment(Comment expectedComment) {
         prepare(expectedComment);
-        assertThat(jpaCommentRepository.findById(expectedComment.getId())).isPresent();
+        assertThat(commentRepository.findById(expectedComment.getId())).isPresent();
 
-        jpaCommentRepository.deleteById(expectedComment.getId());
+        commentRepository.deleteById(expectedComment.getId());
 
-        assertThat(jpaCommentRepository.findById(expectedComment.getId())).isNotPresent();
+        assertThat(commentRepository.findById(expectedComment.getId())).isNotPresent();
     }
 
     private void prepare(Comment expectedComment) {
-        jpaBookRepository.save(expectedComment.getBook());
-        jpaCommentRepository.save(expectedComment);
+        bookRepository.save(expectedComment.getBook());
+        commentRepository.save(expectedComment);
     }
 
     private static List<Book> getDbBooks() {

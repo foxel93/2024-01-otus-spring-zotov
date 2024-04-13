@@ -8,7 +8,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import ru.otus.hw.events.BooksCascadeMongoEventListener;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -21,10 +23,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе DataMongo для работы с книгами")
 @DataMongoTest
+@Import(BooksCascadeMongoEventListener.class)
 class BookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -107,9 +114,17 @@ class BookRepositoryTest {
     @DisplayName("должен удалять книгу по id ")
     @Test
     void shouldDeleteBook() {
-        assertThat(bookRepository.findById("1")).isPresent();
-        bookRepository.deleteById("1");
-        assertThat(bookRepository.findById("1")).isEmpty();
+        var bookId = "1";
+        var book = bookRepository.findById(bookId);
+        var comments = commentRepository.findAllByBookId(bookId);
+
+        assertThat(book).isPresent();
+        assertThat(comments).isNotEmpty();
+
+        bookRepository.delete(book.get());
+
+        assertThat(bookRepository.findById(bookId)).isEmpty();
+        assertThat(commentRepository.findAllByBookId(bookId)).isEmpty();
     }
 
     private static List<Author> getDbAuthors() {

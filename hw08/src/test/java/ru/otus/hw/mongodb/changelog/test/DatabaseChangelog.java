@@ -6,9 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
@@ -48,11 +46,23 @@ public class DatabaseChangelog {
             books.put(i, bookRepository.save(Book.builder()
                 .id(i.toString())
                 .title("BookTitle_" + i)
-                .author(authors.get(i))
+                .author(e.getValue())
                 .genres(List.of(
                     genres.get(j++),
                     genres.get(j++)))
                 .build()));
+        }
+    }
+
+    @ChangeSet(order = "004", id = "initComments", author = "vzotov", runAlways = true)
+    public void initComments(CommentRepository commentRepository) {
+        for (var e : books.entrySet()) {
+            var i = e.getKey();
+            commentRepository.save(Comment.builder()
+                    .id(Integer.toString(i))
+                    .book(e.getValue())
+                    .text("Comment_" + i)
+                .build());
         }
     }
 
