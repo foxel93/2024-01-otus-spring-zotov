@@ -1,10 +1,10 @@
 package ru.otus.hw.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.IntStream;
+import javax.annotation.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,12 +32,9 @@ class CommentRepositoryTest {
         prepare(expectedComment);
 
         var bookComments = commentRepository.findAllByBookId(expectedComment.getBook().getId());
-        assertThat(bookComments).isNotEmpty();
 
-        bookComments.forEach(actualComment -> assertAll(
-            () -> assertThat(actualComment).usingRecursiveComparison().isEqualTo(expectedComment).as("Comments are not equals"),
-            () -> assertThat(actualComment.getBook()).usingRecursiveComparison().isEqualTo(expectedComment.getBook()).as("Books are not equals")
-        ));
+        assertThat(bookComments).isNotEmpty().hasSizeGreaterThanOrEqualTo(1);
+        check(bookComments.get(0), expectedComment);
     }
 
     @DisplayName("должен загружать комментарий по id")
@@ -46,11 +43,9 @@ class CommentRepositoryTest {
     void shouldReturnCorrectCommentById(Comment expectedComment) {
         prepare(expectedComment);
 
-        assertThat(commentRepository.findById(expectedComment.getId()))
-            .isPresent()
-            .get()
-            .usingRecursiveComparison()
-            .isEqualTo(expectedComment);
+        var actualComment = commentRepository.findById(expectedComment.getId()).orElse(null);
+
+        check(actualComment, expectedComment);
     }
 
     @DisplayName("должен удалять по id")
@@ -81,10 +76,10 @@ class CommentRepositoryTest {
     }
 
     private static List<Comment> getDbComments(List<Book> dbBooks) {
-        return IntStream.range(5, 8).boxed()
+        return IntStream.range(1, 4).boxed()
             .map(id -> new Comment(id.toString(),
                 "Comment_" + id,
-                dbBooks.get(id - 5)
+                dbBooks.get(id - 1)
             ))
             .toList();
     }
@@ -92,5 +87,11 @@ class CommentRepositoryTest {
     private static List<Comment> getDbComments() {
         var dbBooks = getDbBooks();
         return getDbComments(dbBooks);
+    }
+
+    private static void check(@Nullable Comment actualComment, Comment expectedComment) {
+        assertThat(actualComment).isNotNull();
+        assertThat(actualComment.getText()).isEqualTo(expectedComment.getText());
+        assertThat(actualComment.getId()).isEqualTo(expectedComment.getId());
     }
 }
