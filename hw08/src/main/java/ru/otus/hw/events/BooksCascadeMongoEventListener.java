@@ -17,9 +17,6 @@ public class BooksCascadeMongoEventListener extends AbstractMongoEventListener<B
     public void onAfterDelete(AfterDeleteEvent<Book> event) {
         var bookId = event.getSource().get("_id").toString();
         super.onAfterDelete(event);
-        var comments = commentRepository.findAllByBookId(bookId);
-        if (!comments.isEmpty()) {
-            commentRepository.deleteAll(comments);
-        }
+        commentRepository.deleteByBookId(bookId);
     }
 }
