@@ -1,10 +1,12 @@
 package ru.otus.hw.mappers;
 
+import org.springframework.stereotype.Component;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.models.Genre;
 
+@Component
 public class GenreMapper {
-    public static GenreDto toGenreDto(Genre genre) {
+    public GenreDto toGenreDto(Genre genre) {
         return new GenreDto(
             genre.getId(),
             genre.getName()

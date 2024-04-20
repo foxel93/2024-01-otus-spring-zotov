@@ -28,7 +28,7 @@ public class BookController {
 
     private final GenreService genreService;
 
-    private final BookMapper bookMapper = new BookMapper();
+    private final BookMapper bookMapper;
 
     @GetMapping("/")
     public String allBooks(Model model) {
@@ -88,7 +88,7 @@ public class BookController {
             model.addAttribute("book", bookDto);
             model.addAttribute("authors", authorService.findAll());
             model.addAttribute("genres", genreService.findAll());
-            return "book/add";
+            return "book/edit";
         }
         bookService.update(bookDto);
         model.addAttribute("book", bookDto);
