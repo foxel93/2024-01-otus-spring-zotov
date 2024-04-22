@@ -53,7 +53,7 @@
     <tr>
         <td th:text="${book.id}">Id</td>
         <td th:text="${book.title}">It</td>
-        <td th:text="${book.author.name}">S. King</td>
+        <td th:text="${book.author.fullName}">S. King</td>
         <td>
             <p th:each="genre : ${book.genres}" th:text="${genre.name}">Horror</p>
         </td>

@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookEditDto {
-    private long id;
-
+public class BookCreateDto {
     @NotEmpty
     private String title;
 

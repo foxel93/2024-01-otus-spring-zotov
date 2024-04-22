@@ -1,17 +1,18 @@
 package ru.otus.hw.services;
 
 import java.util.List;
-import java.util.Optional;
-import ru.otus.hw.models.Comment;
+import ru.otus.hw.dto.CommentCreateDto;
+import ru.otus.hw.dto.CommentDto;
+import ru.otus.hw.dto.CommentUpdateDto;
 
 public interface CommentService {
-    Optional<Comment> findById(long id);
+    CommentDto findById(long id);
 
-    List<Comment> findByBookId(long id);
+    List<CommentDto> findByBookId(long id);
 
-    Comment insert(String text, long bookId);
+    CommentDto create(CommentCreateDto commentCreateDto);
 
-    Comment update(long id, String text);
+    CommentDto update(CommentUpdateDto commentUpdateDto);
 
     void deleteById(long id);
 }

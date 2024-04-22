@@ -12,4 +12,11 @@ public class AuthorMapper {
             author.getFullName()
         );
     }
+
+    public Author toAuthor(AuthorDto authorDto) {
+        return new Author(
+            authorDto.getId(),
+            authorDto.getFullName()
+        );
+    }
 }
