@@ -41,10 +41,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto create(CommentCreateDto commentCreateDto) {
-        var id = commentCreateDto.getBook().getId();
-        bookRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(id)));
-        var comment = commentMapper.toCommentDto(commentCreateDto);
+        var bookId = commentCreateDto.getBookId();
+        var book = bookRepository.findById(bookId)
+            .orElseThrow(() -> new NotFoundException("Book with id %d not found".formatted(bookId)));
+        var comment = commentMapper.toCommentDto(commentCreateDto, book);
         return commentMapper.toCommentDto(commentRepository.save(comment));
     }
 

@@ -84,6 +84,15 @@ class BookControllerTest {
         mvc.perform(get("/books/{id}", id)).andExpect(status().isNotFound());
     }
 
+    @DisplayName("Получение 500 если произошла ошибка при получении книги")
+    @Test
+    void getInternalExceptionByGetting() throws Exception {
+        var id = 1;
+        given(bookService.findById(id)).willThrow(new RuntimeException());
+
+        mvc.perform(get("/books/{id}", id)).andExpect(status().is5xxServerError());
+    }
+
     @DisplayName("Добавление новой книги")
     @Test
     void addBook() throws Exception {

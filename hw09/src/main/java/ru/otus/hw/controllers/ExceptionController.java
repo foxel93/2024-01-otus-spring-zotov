@@ -15,8 +15,8 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(Exception.class)
-    public void handleEntityNotFoundEx(Exception e) throws Exception {
+    public ResponseEntity<String> handleEntityNotFoundEx(Exception e) {
         log.error("Error: ", e);
-        throw e;
+        return ResponseEntity.internalServerError().build();
     }
 }

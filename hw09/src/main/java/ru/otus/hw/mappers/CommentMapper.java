@@ -29,11 +29,11 @@ public class CommentMapper {
         );
     }
 
-    public Comment toCommentDto(CommentCreateDto commentCreateDto) {
+    public Comment toCommentDto(CommentCreateDto commentCreateDto, Book book) {
         return new Comment(
             0,
             commentCreateDto.getText(),
-            bookMapper.toBook(commentCreateDto.getBook())
+            book
         );
     }
 }

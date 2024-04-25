@@ -18,5 +18,5 @@ public class BookCreateDto {
     private Long authorId;
 
     @NotEmpty
-    private Set<Long> genreIds;
+    private Set<@NotNull Long> genreIds;
 }
