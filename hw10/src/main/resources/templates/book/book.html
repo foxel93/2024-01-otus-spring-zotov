@@ -35,6 +35,7 @@
         }
 
     </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
 
@@ -46,32 +47,55 @@
         <th th:text="id">Id</th>
         <th th:text="name">Name</th>
         <th th:text="author">Author</th>
-        <th th:text="genre">Genre</th>
+        <th th:text="genre">Genres</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td th:text="${book.id}">Id</td>
-        <td th:text="${book.title}">It</td>
-        <td th:text="${book.author.fullName}">S. King</td>
-        <td>
-            <p th:each="genre : ${book.genres}" th:text="${genre.name}">Horror</p>
-        </td>
-    </tr>
     </tbody>
 </table>
 
+<script>
+    const book_id = [[${id}]];
+
+    $(function () {
+        $.get(`/api/v1/book/${book_id}`).done(function (book) {
+            $('tbody').append(`
+                <tr>
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author.fullName}</td>
+                    <td><tgenres${book.id}></tgenres${book.id}></td>
+                    <td><tcomment${book.id}></tcomment${book.id}></td>
+                    <td>
+                        <p><a href="/books/${book.id}/edit">Edit</a></p>
+                        <p><a href="javascript:void(0);" onClick="deleteBook()">Delete</a></p>
+                    </td>
+                </tr>
+            `);
+            book.genres.forEach(function (genre) {
+                $('tgenres' + book.id).append(`
+                <p>${genre.name}</p>
+            `);
+            });
+        });
+    });
+
+    function deleteBook() {
+        fetch(`/api/v1/book/${book_id}`, {method: "DELETE"})
+            .then(response => response)
+            .then(function () {
+                location.href = "/books";
+            });
+    }
+
+    function redirect(){
+        window.location.href = `/books`;
+    }
+</script>
+
 <br>
 <div class="row">
-    <a href="edit.html" th:href="@{/books/__${book.id}__/edit}">
-        <button type="button">Edit</button>
-    </a>
-    <form action="#" th:action="@{/books/__${book.id}__/delete}" th:method="post">
-        <button class="ordinary-btn" type="submit">Delete</button>
-    </form>
-    <a href="books.html" th:href="@{/books/}">
-        <button type="button">Return to books</button>
-    </a>
+    <button type="button" onclick=redirect()>Return to books</button>
 </div>
 </body>
 </html>

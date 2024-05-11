@@ -35,6 +35,7 @@
         }
 
     </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body>
 
@@ -51,18 +52,6 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="book : ${books}">
-        <td th:text="${book.id}">1</td>
-        <td th:text="${book.title}">It</td>
-        <td th:text="${book.author.fullName}">S. King</td>
-        <td>
-            <p th:each="genre : ${book.genres}" th:text="${genre.name}">Horror</p>
-        </td>
-        <td>
-            <a href="book.html" th:href="@{/books/{id}(id=${book.id})}">Info</a>
-        </td>
-    </tr>
-    </tbody>
 </table>
 
 <br>
@@ -71,5 +60,31 @@
         <button type="button">Add</button>
     </a>
 </div>
+
+<script>
+    $(function () {
+        $.get('/api/v1/book').done(function (books) {
+            books.forEach(function (book) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author.fullName}</td>
+                        <td><tgenres${book.id}></tgenres${book.id}></td>
+                        <td>
+                            <p><a href=/books/${book.id}>Info</a><p/>
+                        </td>
+                    </tr>
+                `);
+                book.genres.forEach(function (genre) {
+                    $('tgenres' + book.id).append(`
+                    <p>${genre.name}</p>
+                `);
+                });
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

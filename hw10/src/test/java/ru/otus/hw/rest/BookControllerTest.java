@@ -1,5 +1,15 @@
-package ru.otus.hw.controllers;
+package ru.otus.hw.rest;
 
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +28,11 @@ import ru.otus.hw.services.AuthorServiceImpl;
 import ru.otus.hw.services.BookServiceImpl;
 import ru.otus.hw.services.GenreServiceImpl;
 
-import java.util.List;
-
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @DisplayName("Контроллер книг")
 @WebMvcTest(BookController.class)
 @Import({AuthorMapper.class, GenreMapper.class, BookMapper.class})
 class BookControllerTest {
+    private static final ObjectWriter WRITER = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     @Autowired
     private MockMvc mvc;
@@ -60,7 +63,7 @@ class BookControllerTest {
 
         given(bookService.findAll()).willReturn(List.of(bookDto));
 
-        mvc.perform(get("/books/")).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/book")).andExpect(status().isOk());
     }
 
     @DisplayName("Получение книги по id")
@@ -72,7 +75,7 @@ class BookControllerTest {
 
         given(bookService.findById(id)).willReturn(bookDto);
 
-        mvc.perform(get("/books/{id}", id)).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/book/{id}", id)).andExpect(status().isOk());
     }
 
     @DisplayName("Получение 404 если книга не найдена")
@@ -81,7 +84,7 @@ class BookControllerTest {
         var id = 1;
         given(bookService.findById(id)).willThrow(new NotFoundException(""));
 
-        mvc.perform(get("/books/{id}", id)).andExpect(status().isNotFound());
+        mvc.perform(get("/api/v1/book/{id}", id)).andExpect(status().isNotFound());
     }
 
     @DisplayName("Получение 500 если произошла ошибка при получении книги")
@@ -90,7 +93,7 @@ class BookControllerTest {
         var id = 1;
         given(bookService.findById(id)).willThrow(new RuntimeException());
 
-        mvc.perform(get("/books/{id}", id)).andExpect(status().is5xxServerError());
+        mvc.perform(get("/api/v1/book/{id}", id)).andExpect(status().is5xxServerError());
     }
 
     @DisplayName("Добавление новой книги")
@@ -99,8 +102,10 @@ class BookControllerTest {
         var book = generateBook(1);
         var bookDto = bookMapper.toBookCreateDto(book);
 
-        mvc.perform(post("/books/add").flashAttr("book", bookDto))
-            .andExpect(redirectedUrl("/books/"));
+        mvc.perform(post("/api/v1/book")
+                .content(WRITER.writeValueAsString(bookDto))
+                .contentType("application/json"))
+            .andExpect(status().isOk());
     }
 
     @DisplayName("Изменение книги")
@@ -113,8 +118,10 @@ class BookControllerTest {
 
         given(bookService.findById(book.getId())).willReturn(bookDto);
 
-        mvc.perform(post("/books/{id}/edit", id).flashAttr("book", bookUpdateDto))
-            .andExpect(redirectedUrl("/books/" + id));
+        mvc.perform(patch("/api/v1/book")
+                .content(WRITER.writeValueAsString(bookUpdateDto))
+                .contentType("application/json"))
+            .andExpect(status().isOk());
     }
 
     @DisplayName("Удаление книги")
@@ -122,8 +129,8 @@ class BookControllerTest {
     void deleteBookById() throws Exception {
         var id = 1;
 
-        mvc.perform(post("/books/{id}/delete", id))
-            .andExpect(redirectedUrl("/books/"));
+        mvc.perform(delete("/api/v1/book/{id}", id))
+            .andExpect(status().isOk());
     }
 
     private Book generateBook(long id) {
