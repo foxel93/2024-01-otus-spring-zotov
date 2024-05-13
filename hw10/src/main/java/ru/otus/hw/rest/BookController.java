@@ -1,5 +1,6 @@
 package ru.otus.hw.rest;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,12 +33,12 @@ public class BookController {
     }
 
     @PostMapping
-    public BookDto create(@RequestBody BookCreateDto bookCreateDto) {
+    public BookDto create(@RequestBody @Valid BookCreateDto bookCreateDto) {
         return bookService.create(bookCreateDto);
     }
 
-    @PatchMapping
-    public BookDto update(@RequestBody BookUpdateDto bookUpdateDto) {
+    @PatchMapping("/{id}")
+    public BookDto update(@RequestBody @Valid BookUpdateDto bookUpdateDto) {
         return bookService.update(bookUpdateDto);
     }
 

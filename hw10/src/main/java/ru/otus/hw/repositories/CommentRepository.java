@@ -6,4 +6,6 @@ import ru.otus.hw.models.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByBookId(long bookId);
+
+    void deleteByBookId(long bookId);
 }

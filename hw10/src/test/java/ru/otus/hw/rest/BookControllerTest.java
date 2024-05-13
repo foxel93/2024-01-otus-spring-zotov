@@ -118,7 +118,7 @@ class BookControllerTest {
 
         given(bookService.findById(book.getId())).willReturn(bookDto);
 
-        mvc.perform(patch("/api/v1/book")
+        mvc.perform(patch("/api/v1/book/{id}", id)
                 .content(WRITER.writeValueAsString(bookUpdateDto))
                 .contentType("application/json"))
             .andExpect(status().isOk());
