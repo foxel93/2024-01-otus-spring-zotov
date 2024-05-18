@@ -18,3 +18,4 @@ OTUS Spring-2024-01
 | 8  | :white_check_mark:    | [hw08](https://github.com/foxel93/2024-01-otus-spring-zotov/tree/main/hw08)  |
 | 9  | :white_check_mark:    | [hw09](https://github.com/foxel93/2024-01-otus-spring-zotov/tree/main/hw09)  |
 | 10 | :white_check_mark:    | [hw010](https://github.com/foxel93/2024-01-otus-spring-zotov/tree/main/hw10) |
+| 11 | :white_check_mark:    | [hw011](https://github.com/foxel93/2024-01-otus-spring-zotov/tree/main/hw11) |
