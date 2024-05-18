@@ -1,7 +1,6 @@
 package ru.otus.hw.rest;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.CommentCreateDto;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.dto.CommentUpdateDto;
@@ -23,37 +24,37 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public List<CommentDto> getByBookId(@PathVariable("book_id") long bookId) {
-        return commentService.findByBookId(bookId);
+    public Flux<CommentDto> getAllByBookId(@PathVariable("book_id") String bookId) {
+        return commentService.findAllByBookId(bookId);
     }
 
     @GetMapping("/{comment_id}")
-    public CommentDto getById(@PathVariable("book_id") long bookId,
-                              @PathVariable("comment_id") long commentId) {
+    public Mono<CommentDto> getById(@PathVariable("book_id") String bookId,
+                                    @PathVariable("comment_id") String commentId) {
         return commentService.findById(commentId);
     }
 
     @PostMapping
-    public CommentDto create(@PathVariable("book_id") long bookId,
-                             @RequestBody @Valid CommentCreateDto commentCreateDto) {
+    public Mono<CommentDto> create(@PathVariable("book_id") String bookId,
+                                   @RequestBody @Valid CommentCreateDto commentCreateDto) {
         return commentService.create(commentCreateDto);
     }
 
     @PatchMapping("/{comment_id}")
-    public CommentDto update(@PathVariable("book_id") long bookId,
-                             @PathVariable("comment_id") long commentId,
-                             @RequestBody @Valid CommentUpdateDto commentUpdateDto) {
+    public Mono<CommentDto> update(@PathVariable("book_id") String bookId,
+                                   @PathVariable("comment_id") String commentId,
+                                   @RequestBody @Valid CommentUpdateDto commentUpdateDto) {
         return commentService.update(commentUpdateDto);
     }
 
     @DeleteMapping
-    public void deleteByBookId(@PathVariable("book_id") long bookId) {
-        commentService.deleteById(bookId);
+    public Mono<Void> deleteAllByBookId(@PathVariable("book_id") String bookId) {
+        return commentService.deleteById(bookId);
     }
 
     @DeleteMapping("/{comment_id}")
-    public void deleteById(@PathVariable("book_id") long bookId,
-                           @PathVariable("comment_id") long id) {
-        commentService.deleteById(id);
+    public Mono<Void> deleteById(@PathVariable("book_id") String bookId,
+                                 @PathVariable("comment_id") String id) {
+        return commentService.deleteById(id);
     }
 }
