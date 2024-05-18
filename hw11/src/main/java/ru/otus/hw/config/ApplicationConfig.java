@@ -12,7 +12,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.util.annotation.NonNull;
 
 @Configuration
-public class ApplConfig {
+public class ApplicationConfig {
     private static final int THREAD_POOL_SIZE = 2;
 
     @Bean

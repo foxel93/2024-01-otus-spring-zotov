@@ -26,7 +26,7 @@
 <body onload=fetchBook()>
 
 <script>
-    const book_id = [[${id}]];
+    const book_id = '[[${id}]]';
 
     function fetchBook() {
         fetch(`/api/v1/book/${book_id}`)
@@ -58,7 +58,7 @@
 
         const bookUpdateDto = {id: book_id, title: title, authorId: authorId, genreIds: genreIds}
 
-        fetch("/api/v1/book", {
+        fetch(`/api/v1/book/${book_id}`, {
             method: "PATCH",
             headers: {
                 'Accept': 'application/json',

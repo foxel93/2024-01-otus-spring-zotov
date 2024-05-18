@@ -1,6 +1,5 @@
 package ru.otus.hw.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
@@ -17,21 +16,30 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.exceptions.NotFoundException;
+import ru.otus.hw.handler.AuthorHandler;
+import ru.otus.hw.handler.BookHandler;
+import ru.otus.hw.handler.CommentHandler;
+import ru.otus.hw.handler.GenreHandler;
 import ru.otus.hw.mappers.AuthorMapper;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.mappers.GenreMapper;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
+import ru.otus.hw.router.AuthorRouter;
+import ru.otus.hw.router.BookRouter;
+import ru.otus.hw.router.CommentRouter;
+import ru.otus.hw.router.GenreRouter;
 import ru.otus.hw.services.AuthorServiceImpl;
 import ru.otus.hw.services.BookServiceImpl;
+import ru.otus.hw.services.CommentServiceImpl;
 import ru.otus.hw.services.GenreServiceImpl;
 
 @DisplayName("Контроллер книг")
-@WebFluxTest({BookController.class})
+@WebFluxTest({BookHandler.class, BookRouter.class, AuthorRouter.class, CommentRouter.class, GenreRouter.class})
 @AutoConfigureDataMongo
-@Import({AuthorMapper.class, GenreMapper.class, BookMapper.class})
-class BookControllerTest {
+@Import({AuthorMapper.class, GenreMapper.class, BookMapper.class, AuthorHandler.class, CommentHandler.class, GenreHandler.class})
+class BookHandlerTest {
     @Autowired
     private WebTestClient webTestClient;
 
@@ -53,6 +61,9 @@ class BookControllerTest {
     @MockBean
     private GenreServiceImpl genreService;
 
+    @MockBean
+    private CommentServiceImpl commentService;
+
     @DisplayName("Получение всех книг")
     @Test
     void getBooks() {
@@ -61,16 +72,11 @@ class BookControllerTest {
 
         given(bookService.findAll()).willReturn(Flux.just(bookDto));
 
-        var actualBooks = webTestClient.get().uri("/api/v1/book")
+        webTestClient.get().uri("/api/v1/book")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(BookDto.class).hasSize(1)
-            .returnResult()
-            .getResponseBody();
-
-        assertThat(actualBooks).usingRecursiveFieldByFieldElementComparator()
-            .contains(bookDto);
+            .expectBodyList(BookDto.class).hasSize(1).contains(bookDto);
     }
 
     @DisplayName("Получение книги по id")
@@ -82,16 +88,11 @@ class BookControllerTest {
 
         given(bookService.findById(id)).willReturn(Mono.just(bookDto));
 
-        var actualBooks = webTestClient.get().uri("/api/v1/book/{id}", id)
+        webTestClient.get().uri("/api/v1/book/{id}", id)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(BookDto.class).hasSize(1)
-            .returnResult()
-            .getResponseBody();
-
-        assertThat(actualBooks).usingRecursiveFieldByFieldElementComparator()
-            .contains(bookDto);
+            .expectBodyList(BookDto.class).contains(bookDto);
     }
 
     @DisplayName("Получение 404 если книга не найдена")
@@ -121,14 +122,18 @@ class BookControllerTest {
     @DisplayName("Добавление новой книги")
     @Test
     void addBook() {
-        var book = generateBook("1");
+        var book = generateBook("10");
+        var bookDto = bookMapper.toBookDto(book);
+        var bookCreateDto = bookMapper.toBookCreateDto(book);
+
+        given(bookService.create(bookCreateDto)).willReturn(Mono.just(bookDto));
 
         webTestClient.post().uri("/api/v1/book")
             .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(bookMapper.toBookCreateDto(book))
+            .bodyValue(bookCreateDto)
             .exchange()
-            .expectStatus().isOk()
-            .expectBody(BookDto.class);
+            .expectStatus().isCreated()
+            .expectBody(BookDto.class).isEqualTo(bookDto);
     }
 
     @DisplayName("Изменение книги")
@@ -137,26 +142,30 @@ class BookControllerTest {
         var id = "1";
         var book = generateBook(id);
         var bookDto = bookMapper.toBookDto(book);
+        var bookUpdatedDto = bookMapper.toBookUpdateDto(book);
 
-        given(bookService.findById(book.getId())).willReturn(Mono.just(bookDto));
+        given(bookService.findById(bookUpdatedDto.getId())).willReturn(Mono.just(bookDto));
+        given(bookService.update(bookUpdatedDto)).willReturn(Mono.just(bookDto));
 
         webTestClient.patch().uri("/api/v1/book/{id}", id)
             .accept(MediaType.APPLICATION_JSON)
             .bodyValue(bookMapper.toBookUpdateDto(book))
             .exchange()
             .expectStatus().isOk()
-            .expectBody(BookDto.class);
+            .expectBody(BookDto.class).isEqualTo(bookDto);
     }
 
     @DisplayName("Удаление книги")
     @Test
     void deleteBookById() {
-        var id = 1;
+        var id = "1";
+
+        given(bookService.deleteById(id)).willReturn(Mono.empty());
 
         webTestClient.delete().uri("/api/v1/book/{id}", id)
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
-            .expectStatus().isOk();
+            .expectStatus().isNoContent();
     }
 
     private Book generateBook(String id) {

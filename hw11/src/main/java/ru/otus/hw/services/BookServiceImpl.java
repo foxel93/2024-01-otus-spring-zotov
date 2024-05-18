@@ -13,7 +13,6 @@ import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.exceptions.NotFoundException;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.models.Author;
-import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
@@ -67,8 +66,13 @@ public class BookServiceImpl implements BookService {
         var bookId = bookUpdateDto.getId();
         return bookRepository.findById(bookId)
             .switchIfEmpty(Mono.error(new NotFoundException("Book with id %s not found".formatted(bookId))))
-            .flatMap(book -> withOtherAuthor(book, bookUpdateDto.getAuthorId()))
-            .flatMap(book -> withOtherGenres(book, bookUpdateDto.getGenreIds()))
+            .flatMap(ignore -> {
+                var authorMono = author(bookUpdateDto.getAuthorId());
+                var genreMono = genres(bookUpdateDto.getGenreIds());
+                return authorMono
+                    .zipWith(genreMono)
+                    .map(relations -> bookMapper.toBook(bookUpdateDto, relations.getT1(), relations.getT2()));
+            })
             .flatMap(bookRepository::save)
             .map(bookMapper::toBookDto);
     }
@@ -80,26 +84,10 @@ public class BookServiceImpl implements BookService {
             .then(bookRepository.deleteById(id));
     }
 
-    private Mono<Book> withOtherAuthor(Book book, String authorId) {
-        return author(authorId).map(a -> {
-            book.setAuthor(a);
-            return book;
-        });
-    }
-
-    private Mono<Book> withOtherGenres(Book book, Set<String> genreIds) {
-        return genres(genreIds).map(g -> {
-            book.setGenres(g);
-            return book;
-        });
-    }
-
     private Mono<Author> author(String id) {
         return authorRepository.findById(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Author with id %s not found".formatted(id))));
     }
-
-
 
     private Mono<List<Genre>> genres(Set<String> ids) {
         return genreRepository.findByIdIn(ids)
