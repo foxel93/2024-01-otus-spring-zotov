@@ -1,20 +1,21 @@
 package ru.otus.hw.services;
 
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.CommentCreateDto;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.dto.CommentUpdateDto;
 
 public interface CommentService {
-    CommentDto findById(long id);
+    Mono<CommentDto> findById(String id);
 
-    List<CommentDto> findByBookId(long id);
+    Flux<CommentDto> findAllByBookId(String id);
 
-    CommentDto create(CommentCreateDto commentCreateDto);
+    Mono<CommentDto> create(CommentCreateDto commentCreateDto);
 
-    CommentDto update(CommentUpdateDto commentUpdateDto);
+    Mono<CommentDto> update(CommentUpdateDto commentUpdateDto);
 
-    void deleteById(long id);
+    Mono<Void> deleteById(String id);
 
-    void deleteByBookId(long id);
+    Mono<Void> deleteAllByBookId(String id);
 }
