@@ -21,7 +21,7 @@ public class CommentMapper {
         );
     }
 
-    public Comment toCommentDto(CommentUpdateDto commentUpdateDto, Book book) {
+    public Comment toComment(CommentUpdateDto commentUpdateDto, Book book) {
         return new Comment(
             commentUpdateDto.getId(),
             commentUpdateDto.getText(),
@@ -29,9 +29,9 @@ public class CommentMapper {
         );
     }
 
-    public Comment toCommentDto(CommentCreateDto commentCreateDto, Book book) {
+    public Comment toComment(CommentCreateDto commentCreateDto, Book book) {
         return new Comment(
-            0,
+            null,
             commentCreateDto.getText(),
             book
         );

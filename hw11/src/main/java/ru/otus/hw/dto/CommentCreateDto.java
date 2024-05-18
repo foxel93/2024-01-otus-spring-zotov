@@ -13,6 +13,6 @@ public class CommentCreateDto {
     @NotEmpty
     private String text;
 
-    @NotNull
-    private Long bookId;
+    @NotEmpty
+    private String bookId;
 }

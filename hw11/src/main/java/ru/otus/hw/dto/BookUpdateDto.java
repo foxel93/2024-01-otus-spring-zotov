@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookUpdateDto {
-    @NotNull
-    private Long id;
+    @NotEmpty
+    private String id;
 
     @NotEmpty
     private String title;
 
-    @NotNull
-    private Long authorId;
+    @NotEmpty
+    private String authorId;
 
     @NotEmpty
-    private Set<Long> genreIds;
+    private Set<@NotNull String> genreIds;
 }

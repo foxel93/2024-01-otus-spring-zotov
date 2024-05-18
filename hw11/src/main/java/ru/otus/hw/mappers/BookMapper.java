@@ -65,7 +65,7 @@ public class BookMapper {
 
     public Book toBook(BookCreateDto bookCreateDto, Author author, List<Genre> genres) {
         return new Book(
-            0,
+            null,
             bookCreateDto.getTitle(),
             author,
             genres
