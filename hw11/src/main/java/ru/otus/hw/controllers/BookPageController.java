@@ -18,7 +18,7 @@ public class BookPageController {
     }
 
     @GetMapping("/{id}")
-    public String getById(@PathVariable long id, Model model) {
+    public String getById(@PathVariable String id, Model model) {
         model.addAttribute("id", id);
         return "book/book";
     }
@@ -29,13 +29,13 @@ public class BookPageController {
     }
 
     @GetMapping("/{id}/edit")
-    public String update(@PathVariable long id, Model model) {
+    public String update(@PathVariable String id, Model model) {
         model.addAttribute("id", id);
         return "book/edit";
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable long id, Model model) {
+    public String delete(@PathVariable String id, Model model) {
         model.addAttribute("id", id);
         return "redirect:/books/";
     }

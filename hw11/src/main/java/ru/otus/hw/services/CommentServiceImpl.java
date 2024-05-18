@@ -34,8 +34,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public Flux<CommentDto> findAllByBookId(String id) {
         return commentRepository.findAllByBookId(id)
-            .map(commentMapper::toCommentDto)
-            .switchIfEmpty(Mono.error(new NotFoundException("Comments for book id %s not found".formatted(id))));
+            .map(commentMapper::toCommentDto);
     }
 
     @Override
