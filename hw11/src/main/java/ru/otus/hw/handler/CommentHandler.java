@@ -14,12 +14,18 @@ import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.CommentCreateDto;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.dto.CommentUpdateDto;
-import ru.otus.hw.services.CommentService;
+import ru.otus.hw.mappers.CommentMapper;
+import ru.otus.hw.repositories.BookRepository;
+import ru.otus.hw.repositories.CommentRepository;
 
 @Component
 @RequiredArgsConstructor
 public class CommentHandler {
-    private final CommentService commentService;
+    private final CommentRepository commentRepository;
+
+    private final BookRepository bookRepository;
+
+    private final CommentMapper commentMapper;
 
     private final Validator validator;
 
@@ -27,7 +33,7 @@ public class CommentHandler {
         String id = serverRequest.pathVariable("comment_id");
         return ServerResponse.ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .body(commentService.findById(id), CommentDto.class)
+            .body(commentRepository.findById(id).map(commentMapper::toCommentDto), CommentDto.class)
             .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -35,7 +41,7 @@ public class CommentHandler {
         String id = serverRequest.pathVariable("book_id");
         return ServerResponse.ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .body(commentService.findAllByBookId(id), CommentDto.class)
+            .body(commentRepository.findAllByBookId(id).map(commentMapper::toCommentDto), CommentDto.class)
             .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -45,7 +51,10 @@ public class CommentHandler {
                 ServerResponse
                     .status(HttpStatus.CREATED)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(commentService.create(commentCreateDto), CommentDto.class))
+                    .body(bookRepository.findById(commentCreateDto.getBookId())
+                        .map(book -> commentMapper.toComment(commentCreateDto, book))
+                        .flatMap(commentRepository::save)
+                        .map(commentMapper::toCommentDto), CommentDto.class))
             .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -56,7 +65,10 @@ public class CommentHandler {
                 ServerResponse
                     .status(HttpStatus.OK)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(commentService.update(commentUpdateDto), CommentDto.class))
+                    .body(commentRepository.findById(commentUpdateDto.getId())
+                        .map(comment -> commentMapper.toComment(commentUpdateDto, comment.getBook()))
+                        .flatMap(commentRepository::save)
+                        .map(commentMapper::toCommentDto), CommentDto.class))
             .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -64,7 +76,7 @@ public class CommentHandler {
         String id = serverRequest.pathVariable("comment_id");
         return ServerResponse
             .status(HttpStatus.NO_CONTENT)
-            .build(commentService.deleteById(id))
+            .build(commentRepository.deleteById(id))
             .switchIfEmpty(ServerResponse.notFound().build());
     }
 
@@ -72,7 +84,7 @@ public class CommentHandler {
         String id = serverRequest.pathVariable("book_id");
         return ServerResponse
             .status(HttpStatus.NO_CONTENT)
-            .build(commentService.deleteAllByBookId(id))
+            .build(commentRepository.deleteAllByBookId(id))
             .switchIfEmpty(ServerResponse.notFound().build());
     }
 

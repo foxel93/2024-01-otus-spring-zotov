@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
@@ -64,12 +63,6 @@ public class DatabaseChangelog {
                 .book(e.getValue())
                 .text("Comment_" + i)
                 .build());
-        }
-    }
-
-    public static <T> void initData(MongoTemplate mongoTemplate, List<T> list) {
-        for (T value : list) {
-            mongoTemplate.save(value);
         }
     }
 }

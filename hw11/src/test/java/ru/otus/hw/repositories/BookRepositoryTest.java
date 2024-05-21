@@ -16,7 +16,6 @@ import ru.otus.hw.models.Genre;
 
 import java.util.List;
 import java.util.stream.IntStream;
-import ru.otus.hw.mongodb.changelog.test.DatabaseChangelog;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,7 +45,9 @@ class BookRepositoryTest {
     @BeforeEach
     void beforeEach() {
         mongoTemplate.dropCollection(Book.class);
-        DatabaseChangelog.initData(mongoTemplate, dbBooks);
+        for (var value: dbBooks) {
+            mongoTemplate.save(value);
+        }
     }
 
     @DisplayName("должен загружать книгу по id")
