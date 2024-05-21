@@ -1,11 +1,15 @@
 package ru.otus.hw.handler;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.CommentCreateDto;
 import ru.otus.hw.dto.CommentDto;
@@ -16,6 +20,8 @@ import ru.otus.hw.services.CommentService;
 @RequiredArgsConstructor
 public class CommentHandler {
     private final CommentService commentService;
+
+    private final Validator validator;
 
     public Mono<ServerResponse> allCommentById(ServerRequest serverRequest) {
         String id = serverRequest.pathVariable("comment_id");
@@ -34,7 +40,7 @@ public class CommentHandler {
     }
 
     public Mono<ServerResponse> saveComment(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(CommentCreateDto.class)
+        return serverRequest.bodyToMono(CommentCreateDto.class).doOnNext(this::validate)
             .flatMap(commentCreateDto ->
                 ServerResponse
                     .status(HttpStatus.CREATED)
@@ -45,7 +51,7 @@ public class CommentHandler {
 
     public Mono<ServerResponse> updateComment(ServerRequest serverRequest) {
         return serverRequest
-            .bodyToMono(CommentUpdateDto.class)
+            .bodyToMono(CommentUpdateDto.class).doOnNext(this::validate)
             .flatMap(commentUpdateDto ->
                 ServerResponse
                     .status(HttpStatus.OK)
@@ -68,5 +74,13 @@ public class CommentHandler {
             .status(HttpStatus.NO_CONTENT)
             .build(commentService.deleteAllByBookId(id))
             .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    private <T> void validate(T obj) {
+        var violations = this.validator.validate(obj);
+        if (violations.isEmpty()) {
+            return;
+        }
+        throw new ResponseStatusException(INTERNAL_SERVER_ERROR, violations.toString());
     }
 }
