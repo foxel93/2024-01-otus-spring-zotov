@@ -1,6 +1,6 @@
 package ru.otus.hw.handler;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +93,6 @@ public class CommentHandler {
         if (violations.isEmpty()) {
             return;
         }
-        throw new ResponseStatusException(INTERNAL_SERVER_ERROR, violations.toString());
+        throw new ResponseStatusException(BAD_REQUEST, violations.toString());
     }
 }
