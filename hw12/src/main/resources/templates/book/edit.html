@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit book</title>
+    <style>
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body onload=fetchBook()>
+
+<script>
+    const book_id = [[${id}]];
+
+    function fetchBook() {
+        fetch(`/api/v1/book/${book_id}`)
+            .then(response => response.json())
+            .then(book => {
+                fetchGenres(book);
+                fetchAuthors(book);
+                document.getElementById("id-input").value = book.id;
+                document.getElementById("book-title-input").value = book.title;
+            });
+    }
+
+    function fetchGenres(book) {
+        fetch("/api/v1/genre")
+            .then(response => response.json())
+            .then(genres => renderGenres(genres, book.genres));
+    }
+
+    function fetchAuthors(book) {
+        fetch("/api/v1/author")
+            .then(response => response.json())
+            .then(authors => renderAuthors(authors, book.author));
+    }
+
+    function editBook() {
+        const title = document.getElementById("book-title-input").value;
+        const authorId = document.getElementById("author-select").value;
+        const genreIds = $('#genre-select').val();
+
+        const bookUpdateDto = {id: book_id, title: title, authorId: authorId, genreIds: genreIds}
+
+        fetch("/api/v1/book", {
+            method: "PATCH",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookUpdateDto)
+        })
+            .then(response => response.json())
+            .then(redirect);
+    }
+
+    function renderGenres(genres, activeGenres) {
+        const activeGenreIds = new Set();
+        activeGenres.forEach(genre => activeGenreIds.add(genre.id))
+
+        genres.forEach(genre => document
+            .getElementById("genre-select")
+            .add(new Option(genre.name, genre.id, false, activeGenreIds.has(genre.id)))
+        );
+    }
+
+    function renderAuthors(authors, activeAuthor) {
+        authors.forEach(author => document
+            .getElementById("author-select")
+            .add(new Option(author.fullName, author.id, false, activeAuthor.id === author.id))
+        );
+    }
+
+    function redirect(){
+        window.location.href = `/books/${book_id}`;
+    }
+</script>
+
+<!-- Book edition -->
+<form id="edit-form">
+    <h3>Book Info:</h3>
+
+    <div class="row">
+        <label for="id-input">ID:</label>
+        <input id="id-input" type="text" readonly="readonly" value="1"/>
+    </div>
+
+    <div class="row">
+        <label for="book-title-input">Title:</label>
+        <input id="book-title-input" type="text"/>
+    </div>
+
+    <div class="row">
+        <label for="author-select">Author:</label>
+        <select id="author-select"></select>
+    </div>
+
+    <div class="row">
+        <label for="genre-select">Genre:</label>
+        <select multiple id="genre-select"></select>
+    </div>
+
+    <div class="row">
+        <button type="submit" onclick=editBook()>Save</button>
+        <button type="button" onclick=redirect()>Return to book</button>
+    </div>
+</form>
+
+</body>
+</html>
