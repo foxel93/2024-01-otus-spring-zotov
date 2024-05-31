@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.exceptions.NotFoundException;
 import ru.otus.hw.repositories.UserRepository;
 
 @RequiredArgsConstructor
@@ -18,6 +17,6 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository
             .findByLogin(username)
-            .orElseThrow(() -> new NotFoundException("User with login '%s' not found".formatted(username)));
+            .orElseThrow(() -> new UsernameNotFoundException("User with login '%s' not found".formatted(username)));
     }
 }
