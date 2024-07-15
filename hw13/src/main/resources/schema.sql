@@ -34,5 +34,6 @@ create table if not exists users (
     id bigserial,
     login varchar(255),
     password varchar(255),
+    role varchar(20),
     primary key (id)
 );

@@ -29,7 +29,7 @@ public class BookPageControllerTest {
     @MockBean
     private UserService userService;
 
-    static Stream<Arguments> parameters() {
+    static Stream<Arguments> adminParameters() {
         return Stream.of(
             Arguments.of("/books", HttpMethod.GET, 200),
             Arguments.of("/books/1", HttpMethod.GET, 200),
@@ -39,18 +39,37 @@ public class BookPageControllerTest {
         );
     }
 
-    @DisplayName("Получение ответа с авторизацией")
+    static Stream<Arguments> userParameters() {
+        return Stream.of(
+            Arguments.of("/books", HttpMethod.GET, 200),
+            Arguments.of("/books/1", HttpMethod.GET, 200),
+            Arguments.of("/books/add", HttpMethod.GET, 401),
+            Arguments.of("/books/1/edit", HttpMethod.GET, 401),
+            Arguments.of("/books/1/delete", HttpMethod.POST, 401)
+        );
+    }
+
+    @DisplayName("Получение ответа с авторизацией (admin)")
     @ParameterizedTest(name = "{index} - url: [{0}], http method: [{1}]")
-    @MethodSource("parameters")
-    @WithMockUser(username = "admin")
-    void withAuth(String url, HttpMethod method, int responseStatus) throws Exception {
+    @MethodSource("adminParameters")
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
+    void withAdminAuth(String url, HttpMethod method, int responseStatus) throws Exception {
+        mvc.perform(builder(url, method))
+            .andExpect(status().is(responseStatus));
+    }
+
+    @DisplayName("Получение ответа с авторизацией (user)")
+    @ParameterizedTest(name = "{index} - url: [{0}], http method: [{1}]")
+    @MethodSource("userParameters")
+    @WithMockUser(username = "admin", authorities = {"ROLE_USER"})
+    void withUserAuth(String url, HttpMethod method, int responseStatus) throws Exception {
         mvc.perform(builder(url, method))
             .andExpect(status().is(responseStatus));
     }
 
     @DisplayName("Получение ответа без авторизацией")
     @ParameterizedTest(name = "{index} - url: [{0}], http method: [{1}]")
-    @MethodSource("parameters")
+    @MethodSource("adminParameters")
     void withoutAuth(String url, HttpMethod method) throws Exception {
         mvc.perform(builder(url, method))
             .andExpect(status().isFound())

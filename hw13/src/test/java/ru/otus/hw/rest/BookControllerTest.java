@@ -32,6 +32,7 @@ import ru.otus.hw.mappers.GenreMapper;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.Role;
 import ru.otus.hw.security.SecurityConfiguration;
 import ru.otus.hw.services.AuthorServiceImpl;
 import ru.otus.hw.services.BookServiceImpl;
@@ -115,7 +116,7 @@ class BookControllerTest {
 
     @DisplayName("Добавление новой книги")
     @Test
-    @WithMockUser(username = "admin")
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void addBook() throws Exception {
         var book = generateBook(1);
         var bookDto = bookMapper.toBookCreateDto(book);
@@ -128,7 +129,7 @@ class BookControllerTest {
 
     @DisplayName("Изменение книги")
     @Test
-    @WithMockUser(username = "admin")
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void updateBook() throws Exception {
         var id = 1;
         var book = generateBook(id);
@@ -145,7 +146,7 @@ class BookControllerTest {
 
     @DisplayName("Удаление книги")
     @Test
-    @WithMockUser(username = "admin")
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void deleteBookById() throws Exception {
         var id = 1;
 
