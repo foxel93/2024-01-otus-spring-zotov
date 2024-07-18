@@ -52,7 +52,7 @@ public class BookPageControllerTest {
     @DisplayName("Получение ответа с авторизацией (admin)")
     @ParameterizedTest(name = "{index} - url: [{0}], http method: [{1}]")
     @MethodSource("adminParameters")
-    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void withAdminAuth(String url, HttpMethod method, int responseStatus) throws Exception {
         mvc.perform(builder(url, method))
             .andExpect(status().is(responseStatus));
@@ -61,7 +61,7 @@ public class BookPageControllerTest {
     @DisplayName("Получение ответа с авторизацией (user)")
     @ParameterizedTest(name = "{index} - url: [{0}], http method: [{1}]")
     @MethodSource("userParameters")
-    @WithMockUser(username = "admin", authorities = {"ROLE_USER"})
+    @WithMockUser(username = "user")
     void withUserAuth(String url, HttpMethod method, int responseStatus) throws Exception {
         mvc.perform(builder(url, method))
             .andExpect(status().is(responseStatus));
