@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all books</title>
+    <style>
+        body {
+            padding: 50px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+
+        h3 {
+            padding: 2px 2px 2px 30px;
+        }
+
+    </style>
+
+    <style th:inline="text">
+        [h3] {
+            padding: 2px 2px 2px 30px;
+        }
+
+    </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+
+<h3 th:text="books">Books:</h3>
+
+<table class="books">
+    <thead>
+    <tr>
+        <th th:text="id">ID</th>
+        <th th:text="name">Name</th>
+        <th th:text="author">Author</th>
+        <th th:text="genre">Genre</th>
+        <th th:text="action">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+</table>
+
+<br>
+<div class="row">
+    <a href="add.html" th:href="@{/books/add}">
+        <button type="button">Add</button>
+    </a>
+</div>
+
+<script>
+    $(function () {
+        $.get('/api/v1/book').done(function (books) {
+            books.forEach(function (book) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author.fullName}</td>
+                        <td><tgenres${book.id}></tgenres${book.id}></td>
+                        <td>
+                            <p><a href=/books/${book.id}>Info</a><p/>
+                        </td>
+                    </tr>
+                `);
+                book.genres.forEach(function (genre) {
+                    $('tgenres' + book.id).append(`
+                    <p>${genre.name}</p>
+                `);
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

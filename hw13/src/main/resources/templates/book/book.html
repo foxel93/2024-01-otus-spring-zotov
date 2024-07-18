@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book</title>
+    <style>
+        body {
+            padding: 50px;
+        }
+
+        .book {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .book tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .book td:last-child, td:first-child {
+            width: 50px;
+        }
+
+        h3 {
+            padding: 2px 2px 2px 30px;
+        }
+
+    </style>
+
+    <style th:inline="text">
+        [h3] {
+            padding: 2px 2px 2px 30px;
+        }
+
+    </style>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body>
+
+<h3 th:text="Book">Book:</h3>
+
+<table class="book">
+    <thead>
+    <tr>
+        <th th:text="id">Id</th>
+        <th th:text="name">Name</th>
+        <th th:text="author">Author</th>
+        <th th:text="genre">Genres</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    const book_id = [[${id}]];
+
+    $(function () {
+        $.get(`/api/v1/book/${book_id}`).done(function (book) {
+            $('tbody').append(`
+                <tr>
+                    <td>${book.id}</td>
+                    <td>${book.title}</td>
+                    <td>${book.author.fullName}</td>
+                    <td><tgenres${book.id}></tgenres${book.id}></td>
+                    <td><tcomment${book.id}></tcomment${book.id}></td>
+                    <td>
+                        <p><a href="/books/${book.id}/edit">Edit</a></p>
+                        <p><a href="javascript:void(0);" onClick="deleteBook()">Delete</a></p>
+                    </td>
+                </tr>
+            `);
+            book.genres.forEach(function (genre) {
+                $('tgenres' + book.id).append(`
+                <p>${genre.name}</p>
+            `);
+            });
+        });
+    });
+
+    function deleteBook() {
+        fetch(`/api/v1/book/${book_id}`, {method: "DELETE"})
+            .then(response => response)
+            .then(function () {
+                location.href = "/books";
+            });
+    }
+
+    function redirect(){
+        window.location.href = `/books`;
+    }
+</script>
+
+<br>
+<div class="row">
+    <button type="button" onclick=redirect()>Return to books</button>
+</div>
+</body>
+</html>
