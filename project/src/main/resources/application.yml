@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/postgres
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/schema.sql
+  application:
+    name: my-music
+  docker:
+    compose:
+      file: ./project/docker/docker-compose.yml
