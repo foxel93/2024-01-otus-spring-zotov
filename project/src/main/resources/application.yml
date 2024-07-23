@@ -10,3 +10,11 @@ spring:
   docker:
     compose:
       file: ./project/docker/docker-compose.yml
+jwt:
+  token:
+    signing:
+      key: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+      base64: true
+      expiration-ttl: PT24H
+      header: Authorization
+  bearer-prefix: "Bearer "
