@@ -9,7 +9,6 @@ import ru.otus.hw.dto.jwt.JwtAuthenticationResponse;
 import ru.otus.hw.dto.jwt.SignUpRequest;
 import ru.otus.hw.dto.jwt.SingInRequest;
 import ru.otus.hw.dto.user.UserCreateDto;
-import ru.otus.hw.models.Role;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = UserCreateDto.builder()
             .username(request.getUsername())
             .password(passwordEncoder.encode(request.getPassword()))
-            .role(Role.USER)
+            .role(request.getRole())
             .build();
         var createdUser = userService.create(user);
         return new JwtAuthenticationResponse(getToken(createdUser.getUsername()));

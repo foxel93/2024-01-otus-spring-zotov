@@ -1,5 +1,7 @@
 package ru.otus.hw.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
@@ -12,7 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public enum Role implements GrantedAuthority {
-    UNKNOWN("ROLE_UNKNOWN"),
     ADMIN("ROLE_ADMIN"),
     USER("ROLE_USER");
 
@@ -22,7 +23,11 @@ public enum Role implements GrantedAuthority {
 
     private final String authority;
 
-    public static Role of(String name) {
-        return CACHE.getOrDefault(name.toUpperCase(), UNKNOWN);
+    @JsonCreator
+    public static Role of(@Nullable String name) {
+        if (name == null) {
+            return USER;
+        }
+        return CACHE.getOrDefault(name.toUpperCase(), USER);
     }
 }

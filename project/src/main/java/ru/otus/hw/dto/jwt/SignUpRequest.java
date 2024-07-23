@@ -3,6 +3,7 @@ package ru.otus.hw.dto.jwt;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import ru.otus.hw.models.Role;
 
 @Data
 public class SignUpRequest {
@@ -13,4 +14,6 @@ public class SignUpRequest {
     @Size(min = 8, max = 255, message = "Длина пароля должна быть не менее 8 и не более 255 символов")
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
+
+    private Role role = Role.USER; // Для тестов
 }
