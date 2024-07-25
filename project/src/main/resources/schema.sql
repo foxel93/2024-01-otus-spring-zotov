@@ -5,3 +5,9 @@ CREATE TABLE if NOT EXISTS users (
     role VARCHAR(20),
     PRIMARY KEY (id)
 );
+
+CREATE TABLE if NOT EXISTS singers (
+    id bigserial,
+    fullname VARCHAR(100) UNIQUE,
+    PRIMARY KEY (id)
+);
