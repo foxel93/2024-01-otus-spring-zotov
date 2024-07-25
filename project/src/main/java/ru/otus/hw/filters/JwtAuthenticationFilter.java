@@ -20,8 +20,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.otus.hw.configurations.JwtConfiguration;
-import ru.otus.hw.services.JwtService;
-import ru.otus.hw.services.UserService;
+import ru.otus.hw.services.jwt.JwtService;
+import ru.otus.hw.services.user.UserService;
 
 @Component
 @RequiredArgsConstructor

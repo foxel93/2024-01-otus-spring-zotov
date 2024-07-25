@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.singer;
 
 
 import java.util.List;

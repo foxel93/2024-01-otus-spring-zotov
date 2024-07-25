@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.otus.hw.dto.user.UserCreateDto;

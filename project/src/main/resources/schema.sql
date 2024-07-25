@@ -11,3 +11,9 @@ CREATE TABLE if NOT EXISTS singers (
     fullname VARCHAR(100) UNIQUE,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE if NOT EXISTS genres (
+    id bigserial,
+    name VARCHAR(50) UNIQUE,
+    PRIMARY KEY (id)
+);

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.jwt.JwtAuthenticationResponse;
 import ru.otus.hw.dto.jwt.SignUpRequest;
 import ru.otus.hw.dto.jwt.SingInRequest;
-import ru.otus.hw.services.AuthenticationService;
+import ru.otus.hw.services.auth.AuthenticationService;
 
 @RestController
 @RequestMapping("api/v1/auth")

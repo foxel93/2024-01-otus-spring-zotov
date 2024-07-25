@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.auth;
 
 import ru.otus.hw.dto.jwt.JwtAuthenticationResponse;
 import ru.otus.hw.dto.jwt.SignUpRequest;

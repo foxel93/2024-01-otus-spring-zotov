@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.jwt;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

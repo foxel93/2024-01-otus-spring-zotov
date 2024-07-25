@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +9,8 @@ import ru.otus.hw.dto.jwt.JwtAuthenticationResponse;
 import ru.otus.hw.dto.jwt.SignUpRequest;
 import ru.otus.hw.dto.jwt.SingInRequest;
 import ru.otus.hw.dto.user.UserCreateDto;
+import ru.otus.hw.services.jwt.JwtService;
+import ru.otus.hw.services.user.UserService;
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.user;
 
 import jakarta.persistence.EntityExistsException;
 import lombok.AllArgsConstructor;

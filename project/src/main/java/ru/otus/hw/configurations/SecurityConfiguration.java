@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.otus.hw.filters.JwtAuthenticationFilter;
-import ru.otus.hw.services.UserService;
+import ru.otus.hw.services.user.UserService;
 
 @Configuration
 @EnableWebSecurity

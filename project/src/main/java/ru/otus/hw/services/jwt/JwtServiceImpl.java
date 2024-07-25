@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
