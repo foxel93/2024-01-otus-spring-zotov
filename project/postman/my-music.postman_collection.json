@@ -351,6 +351,292 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "genre",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/v1/singers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"singers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/genres/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"genres",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New_Genre_1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/genres",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated_Genre_1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/genres/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"genres",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/genres/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"genres",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "album",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/v1/albums",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"albums"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/albums/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"albums",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New_Genre_1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/albums",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"albums"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated_Album_1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/albums/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"albums",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/albums/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"albums",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {

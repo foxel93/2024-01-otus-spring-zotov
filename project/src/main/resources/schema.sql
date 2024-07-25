@@ -17,3 +17,9 @@ CREATE TABLE if NOT EXISTS genres (
     name VARCHAR(50) UNIQUE,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE if NOT EXISTS albums (
+    id bigserial,
+    name VARCHAR(100),
+    PRIMARY KEY (id)
+);

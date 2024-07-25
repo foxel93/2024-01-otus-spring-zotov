@@ -4,3 +4,6 @@ values ('Singer_1'), ('Singer_2'), ('Singer_3'),
 
 INSERT INTO genres(name)
 values ('Rock'), ('Pop');
+
+INSERT INTO albums(name)
+values ('Album_1'), ('Album_2');
