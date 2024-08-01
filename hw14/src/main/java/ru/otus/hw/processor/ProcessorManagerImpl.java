@@ -1,7 +1,8 @@
 package ru.otus.hw.processor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.dao.jpa.AuthorJpaDao;
 import ru.otus.hw.dao.jpa.BookJapDao;
@@ -12,15 +13,15 @@ import ru.otus.hw.dao.mongo.GenreMongoDao;
 
 @Service
 public class ProcessorManagerImpl implements ProcessorManager, CleanUpService {
-    private final Map<String, Long> bookIdByKeyMap = new HashMap<>();
+    private volatile KeyProcessData bookKeyProcessData = new KeyProcessData();
 
-    private final Map<String, Long> authorIdByKeyMap = new HashMap<>();
+    private volatile KeyProcessData authorKeyProcessData = new KeyProcessData();
 
-    private final Map<String, Long> genreIdByKeyMap = new HashMap<>();
+    private volatile KeyProcessData genreKeyProcessData = new KeyProcessData();
 
     public BookJapDao bookProcess(BookMongoDao item) {
         return BookJapDao.builder()
-            .id(getId(bookIdByKeyMap, item.getId()))
+            .id(bookKeyProcessData.getLongIdByStringKey(item.getId()))
             .title(item.getTitle())
             .author(authorProcess(item.getAuthor()))
             .genres(item.getGenres().stream().map(this::genreProcess).toList())
@@ -28,29 +29,33 @@ public class ProcessorManagerImpl implements ProcessorManager, CleanUpService {
     }
 
     public AuthorJpaDao authorProcess(AuthorMongoDao item) {
-        var id = authorIdByKeyMap.computeIfAbsent(item.getId(), key -> authorIdByKeyMap.size() + 1L);
         return AuthorJpaDao.builder()
-            .id(id)
+            .id(authorKeyProcessData.getLongIdByStringKey(item.getId()))
             .fullName(item.getFullName())
             .build();
     }
 
     public GenreJpaDao genreProcess(GenreMongoDao item) {
-        var id = genreIdByKeyMap.computeIfAbsent(item.getId(), key -> genreIdByKeyMap.size() + 1L);
         return GenreJpaDao.builder()
-            .id(id)
+            .id(genreKeyProcessData.getLongIdByStringKey(item.getId()))
             .name(item.getName())
             .build();
     }
 
-    private long getId(Map<String, Long> map, String key) {
-        return map.computeIfAbsent(key, ign -> genreIdByKeyMap.size() + 1L);
+    @Override
+    public synchronized void cleanUp() {
+        bookKeyProcessData = new KeyProcessData();
+        authorKeyProcessData = new KeyProcessData();
+        genreKeyProcessData = new KeyProcessData();
     }
 
-    @Override
-    public void cleanUp() {
-        bookIdByKeyMap.clear();
-        authorIdByKeyMap.clear();
-        genreIdByKeyMap.clear();
+    private static class KeyProcessData {
+        private final Map<String, Long> idByKeyMap = new ConcurrentHashMap<>();
+
+        private final AtomicLong counter = new AtomicLong();
+
+        private long getLongIdByStringKey(String key) {
+            return idByKeyMap.computeIfAbsent(key, ign -> counter.incrementAndGet());
+        }
     }
 }
