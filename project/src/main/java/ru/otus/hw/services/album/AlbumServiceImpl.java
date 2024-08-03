@@ -39,20 +39,20 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Transactional
     public AlbumDto update(long id, AlbumUpdateDto albumUpdateDto) {
-        albumRepository
+        return albumRepository
             .findById(id)
+            .map(album -> albumMapper.toDao(albumUpdateDto, album))
+            .map(albumRepository::save)
+            .map(albumMapper::toDto)
             .orElseThrow(() -> new NotFoundException("Album with id={%d} not found".formatted(id)));
-        var albumUpdateDao = albumMapper.toDao(albumUpdateDto, id);
-        var updatedAlbumDao = albumRepository.save(albumUpdateDao);
-        return albumMapper.toDto(updatedAlbumDao);
     }
 
     @Override
     @Transactional
     public AlbumDto create(AlbumCreateDto albumCreateDto) {
-        var albumCreateDao = albumMapper.toDao(albumCreateDto);
-        var createdAlbumDao = albumRepository.save(albumCreateDao);
-        return albumMapper.toDto(createdAlbumDao);
+        var albumCreate = albumMapper.toDao(albumCreateDto);
+        var createdAlbum = albumRepository.save(albumCreate);
+        return albumMapper.toDto(createdAlbum);
     }
 
     @Override

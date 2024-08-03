@@ -16,11 +16,9 @@ public class AlbumMapper {
             .build();
     }
 
-    public Album toDao(AlbumUpdateDto albumUpdateDto, long id) {
-        return Album.builder()
-            .name(albumUpdateDto.getName())
-            .id(id)
-            .build();
+    public Album toDao(AlbumUpdateDto albumUpdateDto, Album album) {
+        album.setName(albumUpdateDto.getName());
+        return album;
     }
 
     public AlbumDto toDto(Album album) {

@@ -47,19 +47,19 @@ public class SingerServiceImpl implements SingerService {
     @Override
     @Transactional
     public SingerDto update(long id, SingerUpdateDto singerUpdateDto) {
-        singerRepository
+        return singerRepository
             .findById(id)
+            .map(singer -> singerMapper.toDao(singerUpdateDto, singer))
+            .map(singerRepository::save)
+            .map(singerMapper::toDto)
             .orElseThrow(() -> new NotFoundException("Singer with id={%d} not found".formatted(id)));
-        var singerUpdateDao = singerMapper.toDao(singerUpdateDto, id);
-        var updatedSingerDao = singerRepository.save(singerUpdateDao);
-        return singerMapper.toDto(updatedSingerDao);
     }
 
     @Override
     public SingerDto create(SingerCreateDto singerCreateDto) {
-        var singerCreateDao = singerMapper.toDao(singerCreateDto);
-        var createdSingerDao = singerRepository.save(singerCreateDao);
-        return singerMapper.toDto(createdSingerDao);
+        var singerCreate = singerMapper.toDao(singerCreateDto);
+        var createdSinger = singerRepository.save(singerCreate);
+        return singerMapper.toDto(createdSinger);
     }
 
     @Override

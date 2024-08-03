@@ -39,19 +39,19 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional
     public GenreDto update(long id, GenreUpdateDto genreUpdateDto) {
-        genreRepository
+        return genreRepository
             .findById(id)
+            .map(genre -> genreMapper.toDao(genreUpdateDto, genre))
+            .map(genreRepository::save)
+            .map(genreMapper::toDto)
             .orElseThrow(() -> new NotFoundException("Genre with id={%d} not found".formatted(id)));
-        var genreUpdateDao = genreMapper.toDao(genreUpdateDto, id);
-        var updatedGenreDao = genreRepository.save(genreUpdateDao);
-        return genreMapper.toDto(updatedGenreDao);
     }
 
     @Override
     public GenreDto create(GenreCreateDto genreCreateDto) {
-        var genreCreateDao = genreMapper.toDao(genreCreateDto);
-        var createdGenreDao = genreRepository.save(genreCreateDao);
-        return genreMapper.toDto(createdGenreDao);
+        var genreCreate = genreMapper.toDao(genreCreateDto);
+        var createdGenre = genreRepository.save(genreCreate);
+        return genreMapper.toDto(createdGenre);
     }
 
     @Override

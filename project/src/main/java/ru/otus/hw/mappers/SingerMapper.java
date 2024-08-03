@@ -16,11 +16,9 @@ public class SingerMapper {
             .build();
     }
 
-    public Singer toDao(SingerUpdateDto singerUpdateDto, long id) {
-        return Singer.builder()
-            .fullname(singerUpdateDto.getFullname())
-            .id(id)
-            .build();
+    public Singer toDao(SingerUpdateDto singerUpdateDto, Singer singer) {
+        singer.setFullname(singerUpdateDto.getFullname());
+        return singer;
     }
 
     public SingerDto toDto(Singer singer) {

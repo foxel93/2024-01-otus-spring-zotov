@@ -16,11 +16,9 @@ public class GenreMapper {
             .build();
     }
 
-    public Genre toDao(GenreUpdateDto genreUpdateDto, long id) {
-        return Genre.builder()
-            .name(genreUpdateDto.getName())
-            .id(id)
-            .build();
+    public Genre toDao(GenreUpdateDto genreUpdateDto, Genre genre) {
+        genre.setName(genreUpdateDto.getName());
+        return genre;
     }
 
     public GenreDto toDto(Genre genre) {
