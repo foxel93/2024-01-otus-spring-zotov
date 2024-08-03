@@ -9,10 +9,10 @@ services:
       - "8080:8080"
     container_name: MusicLibrary
     depends_on:
-      - db
+      - music-library-db
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://music-library-db:5432/music-library
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
 
