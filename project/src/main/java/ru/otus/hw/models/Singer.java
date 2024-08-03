@@ -1,4 +1,4 @@
-package ru.otus.hw.dao;
+package ru.otus.hw.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,12 +18,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "albums")
-public class AlbumDao {
+@Table(name = "singers")
+public class Singer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
+    @Column(name = "fullname", nullable = false, unique = true)
+    private String fullname;
 }

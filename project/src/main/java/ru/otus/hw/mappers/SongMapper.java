@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.otus.hw.dao.AlbumDao;
-import ru.otus.hw.dao.GenreDao;
-import ru.otus.hw.dao.SingerDao;
-import ru.otus.hw.dao.SongDao;
+import ru.otus.hw.models.Album;
+import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.Singer;
+import ru.otus.hw.models.Song;
 import ru.otus.hw.dto.song.SongCreateDto;
 import ru.otus.hw.dto.song.SongDto;
 import ru.otus.hw.dto.song.SongUpdateDto;
@@ -21,51 +21,51 @@ public class SongMapper {
 
     private final GenreMapper genreMapper;
 
-    public SongDao toDao(SongCreateDto songCreateDto, SingerDao singerDao, AlbumDao albumDao, GenreDao genreDao) {
-        return SongDao.builder()
+    public Song toDao(SongCreateDto songCreateDto, Singer singer, Album album, Genre genre) {
+        return Song.builder()
             .name(songCreateDto.getName())
-            .album(albumDao)
-            .singer(singerDao)
-            .genre(genreDao)
+            .album(album)
+            .singer(singer)
+            .genre(genre)
             .build();
     }
 
-    public SongDao toDao(SongUpdateDto songUpdateDto, SongDao foundSongDao) {
+    public Song toDao(SongUpdateDto songUpdateDto, Song foundSong) {
         return toDao(
             songUpdateDto,
-            foundSongDao.getId(),
-            foundSongDao.getSinger(),
-            foundSongDao.getAlbum(),
-            foundSongDao.getGenre()
+            foundSong.getId(),
+            foundSong.getSinger(),
+            foundSong.getAlbum(),
+            foundSong.getGenre()
         );
     }
 
-    public SongDao toDao(
+    public Song toDao(
         SongUpdateDto songUpdateDto,
-        long id, SingerDao singerDao,
-        AlbumDao albumDao,
-        GenreDao genreDao
+        long id, Singer singer,
+        Album album,
+        Genre genre
     ) {
-        return SongDao.builder()
+        return Song.builder()
             .name(songUpdateDto.getName())
-            .album(albumDao)
-            .singer(singerDao)
-            .genre(genreDao)
+            .album(album)
+            .singer(singer)
+            .genre(genre)
             .id(id)
             .build();
     }
 
-    public List<SongDto> toDtoList(Collection<SongDao> songDaoList) {
-        return songDaoList.stream().map(this::toDto).toList();
+    public List<SongDto> toDtoList(Collection<Song> songList) {
+        return songList.stream().map(this::toDto).toList();
     }
 
-    public SongDto toDto(SongDao songDao) {
+    public SongDto toDto(Song song) {
         return SongDto.builder()
-            .name(songDao.getName())
-            .id(songDao.getId())
-            .singer(singerMapper.toDto(songDao.getSinger()))
-            .album(albumMapper.toDto(songDao.getAlbum()))
-            .genre(genreMapper.toDto(songDao.getGenre()))
+            .name(song.getName())
+            .id(song.getId())
+            .singer(singerMapper.toDto(song.getSinger()))
+            .album(albumMapper.toDto(song.getAlbum()))
+            .genre(genreMapper.toDto(song.getGenre()))
             .build();
     }
 }

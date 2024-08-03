@@ -1,4 +1,4 @@
-package ru.otus.hw.dao;
+package ru.otus.hw.models;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "songs")
-public class SongDao {
+public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,13 +33,13 @@ public class SongDao {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "album_id")
-    private AlbumDao album;
+    private Album album;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "singer_id")
-    private SingerDao singer;
+    private Singer singer;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "genre_id")
-    private GenreDao genre;
+    private Genre genre;
 }

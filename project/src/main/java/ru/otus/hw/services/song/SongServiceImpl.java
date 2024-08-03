@@ -5,9 +5,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.dao.AlbumDao;
-import ru.otus.hw.dao.GenreDao;
-import ru.otus.hw.dao.SingerDao;
+import ru.otus.hw.models.Album;
+import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.Singer;
 import ru.otus.hw.dto.song.SongCreateDto;
 import ru.otus.hw.dto.song.SongDto;
 import ru.otus.hw.dto.song.SongUpdateDto;
@@ -80,39 +80,39 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public SongDto update(long id, SongUpdateDto songUpdateDto) {
-        var foundSongDao = songRepository
+        return songRepository
             .findById(id)
+            .map(foundSong -> songMapper.toDao(songUpdateDto, foundSong))
+            .map(songRepository::save)
+            .map(songMapper::toDto)
             .orElseThrow(() -> new NotFoundException("Song with id={%d} not found".formatted(id)));
-        var songDao = songMapper.toDao(songUpdateDto, foundSongDao);
-        var updatedSongDao = songRepository.save(songDao);
-        return songMapper.toDto(updatedSongDao);
     }
 
     @Override
     @Transactional
     public SongDto create(SongCreateDto songCreateDto) {
-        var genreDao = tryGetGenreDao(songCreateDto);
-        var singerDao = tryGetSingerDao(songCreateDto);
-        var albumDao = tryGetAlbumDao(songCreateDto);
+        var genre = tryGetGenre(songCreateDto);
+        var singer = tryGetSinger(songCreateDto);
+        var album = tryGetAlbum(songCreateDto);
 
-        var songDao = songMapper.toDao(songCreateDto, singerDao, albumDao, genreDao);
-        var createdSongDao = songRepository.save(songDao);
-        return songMapper.toDto(createdSongDao);
+        var song = songMapper.toDao(songCreateDto, singer, album, genre);
+        var createdSong = songRepository.save(song);
+        return songMapper.toDto(createdSong);
     }
 
-    private GenreDao tryGetGenreDao(SongCreateDto songCreateDto) {
+    private Genre tryGetGenre(SongCreateDto songCreateDto) {
         var genreId = songCreateDto.getGenreId();
         return genreRepository.findById(genreId)
             .orElseThrow(() -> new NotFoundException("Genre with id={%d} not found".formatted(genreId)));
     }
 
-    private SingerDao tryGetSingerDao(SongCreateDto songCreateDto) {
+    private Singer tryGetSinger(SongCreateDto songCreateDto) {
         var singerId = songCreateDto.getSingerId();
         return singerRepository.findById(singerId)
             .orElseThrow(() -> new NotFoundException("Singer with id={%d} not found".formatted(singerId)));
     }
 
-    private AlbumDao tryGetAlbumDao(SongCreateDto songCreateDto) {
+    private Album tryGetAlbum(SongCreateDto songCreateDto) {
         var albumId = songCreateDto.getAlbumId();
         return albumRepository.findById(albumId)
             .orElseThrow(() -> new NotFoundException("Album with id={%d} not found".formatted(albumId)));

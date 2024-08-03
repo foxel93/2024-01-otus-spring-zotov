@@ -1,4 +1,4 @@
-package ru.otus.hw.dao;
+package ru.otus.hw.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +24,7 @@ import ru.otus.hw.models.Role;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class UserDao implements UserDetails {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
