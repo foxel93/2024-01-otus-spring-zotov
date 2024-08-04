@@ -3,16 +3,13 @@ package ru.otus.hw.services.song;
 import java.util.List;
 import ru.otus.hw.dto.song.SongCreateDto;
 import ru.otus.hw.dto.song.SongDto;
+import ru.otus.hw.dto.song.SongFindDto;
 import ru.otus.hw.dto.song.SongUpdateDto;
 
 public interface SongService {
     List<SongDto> findAll();
 
-    List<SongDto> findAllByAlbum(long albumId);
-
-    List<SongDto> findAllByGenre(long genreId);
-
-    List<SongDto> findAllBySinger(long singerId);
+    List<SongDto> findAll(SongFindDto songFindDto);
 
     SongDto findById(long id);
 

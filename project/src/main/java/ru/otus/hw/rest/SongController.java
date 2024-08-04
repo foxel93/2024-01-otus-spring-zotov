@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.song.SongCreateDto;
 import ru.otus.hw.dto.song.SongDto;
+import ru.otus.hw.dto.song.SongFindDto;
 import ru.otus.hw.dto.song.SongUpdateDto;
 import ru.otus.hw.services.song.SongService;
 
@@ -24,29 +25,16 @@ import ru.otus.hw.services.song.SongService;
 public class SongController {
     private final SongService songService;
 
-    @GetMapping
-    public List<SongDto> getAll() {
-        return songService.findAll();
-    }
-
     @GetMapping("/{id}")
     public SongDto getById(@PathVariable("id") long id) {
         return songService.findById(id);
     }
 
-    @GetMapping(params = "genreId")
-    public List<SongDto> getAllByGenreId(long genreId) {
-        return songService.findAllByGenre(genreId);
-    }
-
-    @GetMapping(params = "albumId")
-    public List<SongDto> getAllByAlbumId(long albumId) {
-        return songService.findAllByAlbum(albumId);
-    }
-
-    @GetMapping(params = "singerId")
-    public List<SongDto> getAllBySingerId(long singerId) {
-        return songService.findAllBySinger(singerId);
+    @GetMapping
+    public List<SongDto> getAll(@RequestBody(required = false) @Valid SongFindDto songFindDto) {
+        return songFindDto == null
+            ? songService.findAll()
+            : songService.findAll(songFindDto);
     }
 
     @PostMapping

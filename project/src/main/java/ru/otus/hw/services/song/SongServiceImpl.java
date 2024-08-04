@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.hw.dto.song.SongFindDto;
 import ru.otus.hw.models.Album;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.models.Singer;
@@ -43,29 +44,17 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SongDto> findAllByAlbum(long albumId) {
-        return albumRepository.findById(albumId)
-            .map(songRepository::findAllByAlbum)
-            .map(songMapper::toDtoList)
-            .orElseThrow(() -> new NotFoundException("Album with id={%d} not found".formatted(albumId)));
-    }
+    public List<SongDto> findAll(SongFindDto songFindDto) {
+        var genre = songFindDto.getGenreId() == null ? null : tryGetGenre(songFindDto.getGenreId());
+        var singer = songFindDto.getSingerId() == null ? null : tryGetSinger(songFindDto.getSingerId());
+        var album = songFindDto.getAlbumId() == null ? null : tryGetAlbum(songFindDto.getAlbumId());
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<SongDto> findAllByGenre(long genreId) {
-        return genreRepository.findById(genreId)
-            .map(songRepository::findAllByGenre)
-            .map(songMapper::toDtoList)
-            .orElseThrow(() -> new NotFoundException("Genre with id={%d} not found".formatted(genreId)));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<SongDto> findAllBySinger(long singerId) {
-        return singerRepository.findById(singerId)
-            .map(songRepository::findAllBySinger)
-            .map(songMapper::toDtoList)
-            .orElseThrow(() -> new NotFoundException("Singer with id={%d} not found".formatted(singerId)));
+        return songRepository
+            .findAllByAlbumAndGenreAndSinger(album, genre, singer)
+            .stream()
+            .map(songMapper::toDto)
+            .sorted(Comparator.comparing(SongDto::getName))
+            .toList();
     }
 
     @Override
@@ -91,29 +80,26 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public SongDto create(SongCreateDto songCreateDto) {
-        var genre = tryGetGenre(songCreateDto);
-        var singer = tryGetSinger(songCreateDto);
-        var album = tryGetAlbum(songCreateDto);
+        var genre = tryGetGenre(songCreateDto.getGenreId());
+        var singer = tryGetSinger(songCreateDto.getSingerId());
+        var album = tryGetAlbum(songCreateDto.getAlbumId());
 
         var song = songMapper.toDao(songCreateDto, singer, album, genre);
         var createdSong = songRepository.save(song);
         return songMapper.toDto(createdSong);
     }
 
-    private Genre tryGetGenre(SongCreateDto songCreateDto) {
-        var genreId = songCreateDto.getGenreId();
+    private Genre tryGetGenre(long genreId) {
         return genreRepository.findById(genreId)
             .orElseThrow(() -> new NotFoundException("Genre with id={%d} not found".formatted(genreId)));
     }
 
-    private Singer tryGetSinger(SongCreateDto songCreateDto) {
-        var singerId = songCreateDto.getSingerId();
+    private Singer tryGetSinger(long singerId) {
         return singerRepository.findById(singerId)
             .orElseThrow(() -> new NotFoundException("Singer with id={%d} not found".formatted(singerId)));
     }
 
-    private Album tryGetAlbum(SongCreateDto songCreateDto) {
-        var albumId = songCreateDto.getAlbumId();
+    private Album tryGetAlbum(long albumId) {
         return albumRepository.findById(albumId)
             .orElseThrow(() -> new NotFoundException("Album with id={%d} not found".formatted(albumId)));
     }
