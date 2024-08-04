@@ -1,0 +1,31 @@
+version: '1'
+
+services:
+  music-library:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    container_name: MusicLibrary
+    depends_on:
+      - music-library-db
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://music-library-db:5432/music-library
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+
+  music-library-db:
+    image: 'postgres:16.2-alpine'
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    command: -p 5432
+    container_name: MusicLibraryDB
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=music-library
