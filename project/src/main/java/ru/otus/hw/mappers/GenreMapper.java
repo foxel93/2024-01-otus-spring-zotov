@@ -1,5 +1,7 @@
 package ru.otus.hw.mappers;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.models.Genre;
@@ -26,5 +28,12 @@ public class GenreMapper {
             .name(genre.getName())
             .id(genre.getId())
             .build();
+    }
+
+    public List<GenreDto> toDto(Collection<Genre> genres) {
+        return genres
+            .stream()
+            .map(this::toDto)
+            .toList();
     }
 }

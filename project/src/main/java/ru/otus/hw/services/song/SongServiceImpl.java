@@ -78,11 +78,11 @@ public class SongServiceImpl implements SongService {
     @Override
     @Transactional
     public SongDto create(SongCreateDto songCreateDto) {
-        var genre = tryGetGenre(songCreateDto.getGenreId());
-        var singer = tryGetSinger(songCreateDto.getSingerId());
-        var album = tryGetAlbum(songCreateDto.getAlbumId());
+        var genres = genreRepository.findByIdIn(songCreateDto.getGenreIds());
+        var singers = singerRepository.findByIdIn(songCreateDto.getSingerIds());
+        var albums = albumRepository.findByIdIn(songCreateDto.getAlbumIds());
 
-        var song = songMapper.toDao(songCreateDto, singer, album, genre);
+        var song = songMapper.toDao(songCreateDto, singers, albums, genres);
         var createdSong = songRepository.save(song);
         return songMapper.toDto(createdSong);
     }

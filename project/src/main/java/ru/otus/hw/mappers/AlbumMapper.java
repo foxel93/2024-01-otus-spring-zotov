@@ -1,5 +1,7 @@
 package ru.otus.hw.mappers;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.models.Album;
@@ -26,5 +28,12 @@ public class AlbumMapper {
             .name(album.getName())
             .id(album.getId())
             .build();
+    }
+
+    public List<AlbumDto> toDto(Collection<Album> albums) {
+        return albums
+            .stream()
+            .map(this::toDto)
+            .toList();
     }
 }

@@ -1,6 +1,9 @@
 package ru.otus.hw.dto.song;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,14 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SongUpdateDto {
+    @NotBlank
     private String name;
 
-    @NotNull
-    private Long singerId;
+    @NotEmpty
+    private Set<@NotNull Long> singerIds;
 
-    @NotNull
-    private Long albumId;
+    @NotEmpty
+    private Set<@NotNull Long> albumIds;
 
-    @NotNull
-    private Long genreId;
+    @NotEmpty
+    private Set<@NotNull Long> genreIds;
 }

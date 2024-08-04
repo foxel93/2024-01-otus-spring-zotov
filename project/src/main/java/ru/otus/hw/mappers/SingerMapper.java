@@ -1,5 +1,7 @@
 package ru.otus.hw.mappers;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.models.Singer;
@@ -26,5 +28,12 @@ public class SingerMapper {
             .fullname(singer.getFullname())
             .id(singer.getId())
             .build();
+    }
+
+    public List<SingerDto> toDto(Collection<Singer> singers) {
+        return singers
+            .stream()
+            .map(this::toDto)
+            .toList();
     }
 }

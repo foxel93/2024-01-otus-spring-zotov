@@ -1,5 +1,6 @@
 package ru.otus.hw.dto.song;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import ru.otus.hw.dto.album.AlbumDto;
@@ -13,9 +14,9 @@ public class SongDto {
 
     private String name;
 
-    private AlbumDto album;
+    private List<AlbumDto> albums;
 
-    private GenreDto genre;
+    private List<GenreDto> genres;
 
-    private SingerDto singer;
+    private List<SingerDto> singers;
 }

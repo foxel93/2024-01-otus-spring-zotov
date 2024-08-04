@@ -1,5 +1,7 @@
 package ru.otus.hw.mappers;
 
+import java.util.Collection;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.models.Album;
@@ -19,12 +21,17 @@ public class SongMapper {
 
     private final GenreMapper genreMapper;
 
-    public Song toDao(SongCreateDto songCreateDto, Singer singer, Album album, Genre genre) {
+    public Song toDao(
+        SongCreateDto songCreateDto,
+        Collection<Singer> singers,
+        Collection<Album> albums,
+        Collection<Genre> genres
+    ) {
         return Song.builder()
             .name(songCreateDto.getName())
-            .album(album)
-            .singer(singer)
-            .genre(genre)
+            .albums(Set.copyOf(albums))
+            .singers(Set.copyOf(singers))
+            .genres(Set.copyOf(genres))
             .build();
     }
 
@@ -32,23 +39,24 @@ public class SongMapper {
         return toDao(
             songUpdateDto,
             foundSong.getId(),
-            foundSong.getSinger(),
-            foundSong.getAlbum(),
-            foundSong.getGenre()
+            foundSong.getSingers(),
+            foundSong.getAlbums(),
+            foundSong.getGenres()
         );
     }
 
     public Song toDao(
         SongUpdateDto songUpdateDto,
-        long id, Singer singer,
-        Album album,
-        Genre genre
+        long id,
+        Set<Singer> singers,
+        Set<Album> albums,
+        Set<Genre> genres
     ) {
         return Song.builder()
             .name(songUpdateDto.getName())
-            .album(album)
-            .singer(singer)
-            .genre(genre)
+            .albums(albums)
+            .singers(singers)
+            .genres(genres)
             .id(id)
             .build();
     }
@@ -57,9 +65,9 @@ public class SongMapper {
         return SongDto.builder()
             .name(song.getName())
             .id(song.getId())
-            .singer(singerMapper.toDto(song.getSinger()))
-            .album(albumMapper.toDto(song.getAlbum()))
-            .genre(genreMapper.toDto(song.getGenre()))
+            .singers(singerMapper.toDto(song.getSingers()))
+            .albums(albumMapper.toDto(song.getAlbums()))
+            .genres(genreMapper.toDto(song.getGenres()))
             .build();
     }
 }

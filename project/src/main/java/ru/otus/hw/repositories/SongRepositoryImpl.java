@@ -3,7 +3,6 @@ package ru.otus.hw.repositories;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -88,9 +87,9 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
     ) {
         var predicates = new ArrayList<Predicate>(3);
 
-        tryAddPredicate(predicates, cb, songRoot.get("album"), album);
-        tryAddPredicate(predicates, cb, songRoot.get("genre"), genre);
-        tryAddPredicate(predicates, cb, songRoot.get("singer"), singer);
+        tryAddPredicate(predicates, cb, songRoot, "albums", album);
+        tryAddPredicate(predicates, cb, songRoot, "genres", genre);
+        tryAddPredicate(predicates, cb, songRoot, "singers", singer);
 
         return predicates.toArray(new Predicate[0]);
     }
@@ -98,11 +97,12 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
     private static <T> void tryAddPredicate(
         List<Predicate> predicates,
         CriteriaBuilder cb,
-        Path<?> path,
+        Root<Song> songRoot,
+        String attributeName,
         @Nullable T object
     ) {
         if (object != null) {
-            predicates.add(cb.equal(path, object));
+            predicates.add(cb.isMember(object, songRoot.get(attributeName)));
         }
     }
 }

@@ -8,15 +8,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Getter
 @Setter
@@ -27,9 +31,9 @@ import lombok.Setter;
 @Table(name = "songs")
 @NamedEntityGraph(name = "song-album-genre-singer-graph",
     attributeNodes = {
-        @NamedAttributeNode("album"),
-        @NamedAttributeNode("genre"),
-        @NamedAttributeNode("singer"),
+        @NamedAttributeNode("albums"),
+        @NamedAttributeNode("genres"),
+        @NamedAttributeNode("singers"),
     }
 )
 public class Song {
@@ -40,15 +44,24 @@ public class Song {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "album_id")
-    private Album album;
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, targetEntity = Album.class)
+    @JoinTable(name = "songs_albums",
+        joinColumns = @JoinColumn(name = "song_id"),
+        inverseJoinColumns = @JoinColumn(name = "album_id"))
+    private Set<Album> albums;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "singer_id")
-    private Singer singer;
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, targetEntity = Singer.class)
+    @JoinTable(name = "songs_singers",
+        joinColumns = @JoinColumn(name = "song_id"),
+        inverseJoinColumns = @JoinColumn(name = "singer_id"))
+    private Set<Singer> singers;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "genre_id")
-    private Genre genre;
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, targetEntity = Genre.class)
+    @JoinTable(name = "songs_genres",
+        joinColumns = @JoinColumn(name = "song_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres;
 }

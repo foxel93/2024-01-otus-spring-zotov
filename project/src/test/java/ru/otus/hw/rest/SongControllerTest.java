@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,9 +86,9 @@ public class SongControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void addSong() throws Exception {
         var songCreateDto = SongCreateDto.builder()
-            .albumId(1L)
-            .genreId(1L)
-            .singerId(1L)
+            .albumIds(Set.of(1L))
+            .genreIds(Set.of(1L))
+            .singerIds(Set.of(1L))
             .name("new_song")
             .build();
         mvc.perform(post("/api/v1/songs")
@@ -100,13 +101,13 @@ public class SongControllerTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void updateSong() throws Exception {
-        var id = 1;
+        var id = 1L;
         var songDto = generateSong(id);
         var songUpdateDto = SongUpdateDto.builder()
             .name("updated_song")
-            .albumId((long) id)
-            .genreId((long) id)
-            .singerId((long) id)
+            .albumIds(Set.of(id))
+            .genreIds(Set.of(id))
+            .singerIds(Set.of(id))
             .build();
 
         given(songService.findById(id)).willReturn(songDto);
@@ -131,9 +132,9 @@ public class SongControllerTest {
         return SongDto.builder()
             .id(id)
             .name("Song_" + id)
-            .album(AlbumDto.builder().id(id).name("Album_" + id).build())
-            .genre(GenreDto.builder().id(id).name("Genre_" + id).build())
-            .singer(SingerDto.builder().id(id).fullname("Singer_" + id).build())
+            .albums(List.of(AlbumDto.builder().id(id).name("Album_" + id).build()))
+            .genres(List.of(GenreDto.builder().id(id).name("Genre_" + id).build()))
+            .singers(List.of(SingerDto.builder().id(id).fullname("Singer_" + id).build()))
             .build();
     }
 }
