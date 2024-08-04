@@ -663,7 +663,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/v1/songs",
+							"raw": "{{url}}/api/v1/songs?sort_by=name,asc",
 							"host": [
 								"{{url}}"
 							],
@@ -671,6 +671,12 @@
 								"api",
 								"v1",
 								"songs"
+							],
+							"query": [
+								{
+									"key": "sort_by",
+									"value": "name,asc"
+								}
 							]
 						}
 					},
@@ -698,11 +704,23 @@
 				},
 				{
 					"name": "GetByAlbumId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"albumId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{url}}/api/v1/songs?albumId=1",
+							"raw": "{{url}}/api/v1/songs",
 							"host": [
 								"{{url}}"
 							],
@@ -710,12 +728,6 @@
 								"api",
 								"v1",
 								"songs"
-							],
-							"query": [
-								{
-									"key": "albumId",
-									"value": "1"
-								}
 							]
 						}
 					},
@@ -723,11 +735,23 @@
 				},
 				{
 					"name": "GetBySingerId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"singerId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{url}}/api/v1/songs?singerId=1",
+							"raw": "{{url}}/api/v1/songs",
 							"host": [
 								"{{url}}"
 							],
@@ -739,7 +763,8 @@
 							"query": [
 								{
 									"key": "singerId",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								}
 							]
 						}
@@ -748,11 +773,23 @@
 				},
 				{
 					"name": "GetByGenreId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genreId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{url}}/api/v1/songs?genreId=1",
+							"raw": "{{url}}/api/v1/songs",
 							"host": [
 								"{{url}}"
 							],
@@ -760,12 +797,6 @@
 								"api",
 								"v1",
 								"songs"
-							],
-							"query": [
-								{
-									"key": "genreId",
-									"value": "1"
-								}
 							]
 						}
 					},

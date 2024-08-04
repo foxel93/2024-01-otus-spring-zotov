@@ -1,8 +1,8 @@
 package ru.otus.hw.services.song;
 
-import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.song.SongFindDto;
@@ -34,26 +34,24 @@ public class SongServiceImpl implements SongService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SongDto> findAll() {
-        return songRepository.findAll()
+    public List<SongDto> findAll(Pageable pageable) {
+        return songRepository.findAll(pageable)
             .stream()
             .map(songMapper::toDto)
-            .sorted(Comparator.comparing(SongDto::getName))
             .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<SongDto> findAll(SongFindDto songFindDto) {
+    public List<SongDto> findAll(SongFindDto songFindDto, Pageable pageable) {
         var genre = songFindDto.getGenreId() == null ? null : tryGetGenre(songFindDto.getGenreId());
         var singer = songFindDto.getSingerId() == null ? null : tryGetSinger(songFindDto.getSingerId());
         var album = songFindDto.getAlbumId() == null ? null : tryGetAlbum(songFindDto.getAlbumId());
 
         return songRepository
-            .findAllByAlbumAndGenreAndSinger(album, genre, singer)
+            .findAllByAlbumAndGenreAndSinger(album, genre, singer, pageable)
             .stream()
             .map(songMapper::toDto)
-            .sorted(Comparator.comparing(SongDto::getName))
             .toList();
     }
 

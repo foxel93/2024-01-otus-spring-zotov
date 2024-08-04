@@ -1,8 +1,8 @@
 package ru.otus.hw.services.singer;
 
-import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.singer.SingerCreateDto;
@@ -21,11 +21,10 @@ public class SingerServiceImpl implements SingerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SingerDto> findAll() {
-        return singerRepository.findAll()
+    public List<SingerDto> findAll(Pageable pageable) {
+        return singerRepository.findAll(pageable)
             .stream()
             .map(singerMapper::toDto)
-            .sorted(Comparator.comparing(SingerDto::getFullname))
             .toList();
     }
 

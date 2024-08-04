@@ -1,8 +1,8 @@
 package ru.otus.hw.services.genre;
 
-import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.genre.GenreCreateDto;
@@ -21,11 +21,10 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GenreDto> findAll() {
-        return genreRepository.findAll()
+    public List<GenreDto> findAll(Pageable pageable) {
+        return genreRepository.findAll(pageable)
             .stream()
             .map(genreMapper::toDto)
-            .sorted(Comparator.comparing(GenreDto::getName))
             .toList();
     }
 

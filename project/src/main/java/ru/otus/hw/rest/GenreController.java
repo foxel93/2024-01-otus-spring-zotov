@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.genre.GenreCreateDto;
 import ru.otus.hw.dto.genre.GenreDto;
 import ru.otus.hw.dto.genre.GenreUpdateDto;
 import ru.otus.hw.services.genre.GenreService;
+import ru.otus.hw.utils.UtilsController;
 
 @RestController
 @RequestMapping("api/v1/genres")
@@ -25,8 +27,13 @@ public class GenreController {
     private final GenreService genreService;
 
     @GetMapping
-    public List<GenreDto> getAll() {
-        return genreService.findAll();
+    public List<GenreDto> getAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "3") int size,
+        @RequestParam(defaultValue = "id,desc", name = "sort_by") String[] sorts
+    ) {
+        var pagingSort = UtilsController.pageRequest(page, size, sorts);
+        return genreService.findAll(pagingSort);
     }
 
     @GetMapping("/{id}")

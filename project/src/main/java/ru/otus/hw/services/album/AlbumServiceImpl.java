@@ -1,8 +1,8 @@
 package ru.otus.hw.services.album;
 
-import java.util.Comparator;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.album.AlbumCreateDto;
@@ -21,11 +21,10 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AlbumDto> findAll() {
-        return albumRepository.findAll()
+    public List<AlbumDto> findAll(Pageable pageable) {
+        return albumRepository.findAll(pageable)
             .stream()
             .map(albumMapper::toDto)
-            .sorted(Comparator.comparing(AlbumDto::getName))
             .toList();
     }
 

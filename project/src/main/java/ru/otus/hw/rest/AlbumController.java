@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.album.AlbumCreateDto;
 import ru.otus.hw.dto.album.AlbumDto;
 import ru.otus.hw.dto.album.AlbumUpdateDto;
 import ru.otus.hw.services.album.AlbumService;
+import ru.otus.hw.utils.UtilsController;
 
 @RestController
 @RequestMapping("api/v1/albums")
@@ -25,8 +27,13 @@ public class AlbumController {
     private final AlbumService albumService;
 
     @GetMapping
-    public List<AlbumDto> getAll() {
-        return albumService.findAll();
+    public List<AlbumDto> getAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "3") int size,
+        @RequestParam(defaultValue = "id,desc", name = "sort_by") String[] sorts
+    ) {
+        var pagingSort = UtilsController.pageRequest(page, size, sorts);
+        return albumService.findAll(pagingSort);
     }
 
     @GetMapping("/{id}")

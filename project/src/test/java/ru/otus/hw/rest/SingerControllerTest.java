@@ -1,5 +1,6 @@
 package ru.otus.hw.rest;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,7 +51,7 @@ public class SingerControllerTest {
     @WithMockUser(username = "admin")
     void getSingers() throws Exception {
         var singerDto = generateSinger(1);
-        given(singerService.findAll()).willReturn(List.of(singerDto));
+        given(singerService.findAll(any())).willReturn(List.of(singerDto));
 
         mvc.perform(get("/api/v1/singers")).andExpect(status().isOk());
     }

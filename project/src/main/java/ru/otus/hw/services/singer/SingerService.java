@@ -1,13 +1,13 @@
 package ru.otus.hw.services.singer;
 
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import ru.otus.hw.dto.singer.SingerCreateDto;
 import ru.otus.hw.dto.singer.SingerDto;
 import ru.otus.hw.dto.singer.SingerUpdateDto;
 
 public interface SingerService {
-    List<SingerDto> findAll();
+    List<SingerDto> findAll(Pageable pageable);
 
     SingerDto findByName(String name);
 

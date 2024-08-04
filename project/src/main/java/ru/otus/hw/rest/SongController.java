@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.song.SongCreateDto;
 import ru.otus.hw.dto.song.SongDto;
 import ru.otus.hw.dto.song.SongFindDto;
 import ru.otus.hw.dto.song.SongUpdateDto;
 import ru.otus.hw.services.song.SongService;
+import ru.otus.hw.utils.UtilsController;
 
 @RestController
 @RequestMapping("api/v1/songs")
@@ -31,10 +33,16 @@ public class SongController {
     }
 
     @GetMapping
-    public List<SongDto> getAll(@RequestBody(required = false) @Valid SongFindDto songFindDto) {
+    public List<SongDto> getAll(
+        @RequestBody(required = false) @Valid SongFindDto songFindDto,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "3") int size,
+        @RequestParam(defaultValue = "id,desc", name = "sort_by") String[] sorts
+    ) {
+        var pagingSort = UtilsController.pageRequest(page, size, sorts);
         return songFindDto == null
-            ? songService.findAll()
-            : songService.findAll(songFindDto);
+            ? songService.findAll(pagingSort)
+            : songService.findAll(songFindDto, pagingSort);
     }
 
     @PostMapping
