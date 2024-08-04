@@ -38,18 +38,26 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
         return new PageImpl<>(result, pageable, count);
     }
 
-    private List<Song> result(CriteriaBuilder cb, @Nullable Album album, @Nullable Genre genre, @Nullable Singer singer,
-                              Pageable pageable) {
+    private List<Song> result(
+        CriteriaBuilder cb,
+        @Nullable Album album,
+        @Nullable Genre genre,
+        @Nullable Singer singer,
+        Pageable pageable
+    ) {
         var cq = cb.createQuery(Song.class);
+        var entityGraph = em.getEntityGraph("song-album-genre-singer-graph");
 
         var songRoot = cq.from(Song.class);
         var predicates = predicates(cb, songRoot, album, genre, singer);
 
         cq
             .where(predicates)
-            .orderBy(QueryUtils.toOrders(pageable.getSort(), songRoot, cb));
+            .orderBy(QueryUtils.toOrders(pageable.getSort(), songRoot, cb))
+        ;
 
         return em.createQuery(cq)
+            .setHint("jakarta.persistence.fetchgraph", entityGraph)
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
@@ -58,6 +66,7 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
     private long count(CriteriaBuilder cb, @Nullable Album album, @Nullable Genre genre, @Nullable Singer singer) {
         var countQuery = cb.createQuery(Long.class);
         var songRoot = countQuery.from(Song.class);
+        var entityGraph = em.getEntityGraph("song-album-genre-singer-graph");
 
         var predicates = predicates(cb, songRoot, album, genre, singer);
 
@@ -65,7 +74,9 @@ public class SongRepositoryImpl implements SongRepositoryCustom {
             .select(cb.count(songRoot))
             .where(cb.and(predicates));
 
-        return em.createQuery(countQuery).getSingleResult();
+        return em.createQuery(countQuery)
+            .setHint("jakarta.persistence.fetchgraph", entityGraph)
+            .getSingleResult();
     }
 
     private Predicate[] predicates(

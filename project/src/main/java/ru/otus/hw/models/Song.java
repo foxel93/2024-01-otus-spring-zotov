@@ -9,6 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +25,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "songs")
+@NamedEntityGraph(name = "song-album-genre-singer-graph",
+    attributeNodes = {
+        @NamedAttributeNode("album"),
+        @NamedAttributeNode("genre"),
+        @NamedAttributeNode("singer"),
+    }
+)
 public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
